@@ -4,13 +4,11 @@ package etutor.bpmndispatcher.rest.dto.entities;
 import etutor.bpmndispatcher.rest.dto.entities.testEngine.TestEngineRuntimeDTO;
 
 import javax.persistence.*;
-import javax.transaction.Transactional;
 
 @Entity
-@Transactional
 public class TestEngineDTO {
     @OneToOne(cascade = {CascadeType.ALL})
-    @JoinColumn(name = "id")
+    @JoinColumn(name = "testEngineRuntimeDTO")
     public TestEngineRuntimeDTO testEngineRuntimeDTO;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

@@ -2,26 +2,29 @@ package etutor.bpmndispatcher.rest.dto.entities;
 
 
 import etutor.bpmndispatcher.rest.dto.interfaces.TestConfig_Interface;
+import net.minidev.json.annotate.JsonIgnore;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.List;
 
 @Entity
-public class TestConfigDTO implements TestConfig_Interface {
+public class TestConfigDTO implements TestConfig_Interface, Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @JsonIgnore
     private Long id;
 
     @ElementCollection
-    private List<String> taskNames = new java.util.ArrayList<>();
+    private List<String> tasksInCorrectOrder = new java.util.ArrayList<>();
     @ElementCollection
     private List<String> labels = new java.util.ArrayList<>();
 
     public TestConfigDTO() {
     }
 
-    public TestConfigDTO(List<String> taskNames, List<String> labels) {
-        this.taskNames = taskNames;
+    public TestConfigDTO(List<String> tasksInCorrectOrder, List<String> labels) {
+        this.tasksInCorrectOrder = tasksInCorrectOrder;
         this.labels = labels;
     }
 
@@ -33,12 +36,12 @@ public class TestConfigDTO implements TestConfig_Interface {
         this.id = id;
     }
 
-    public List<String> getTaskNames() {
-        return taskNames;
+    public List<String> getTasksInCorrectOrder() {
+        return tasksInCorrectOrder;
     }
 
-    public void setTaskNames(List<String> taskNames) {
-        this.taskNames = taskNames;
+    public void setTasksInCorrectOrder(List<String> taskNames) {
+        this.tasksInCorrectOrder = taskNames;
     }
 
     public List<String> getLabels() {
@@ -52,8 +55,11 @@ public class TestConfigDTO implements TestConfig_Interface {
     @Override
     public String toString() {
         return "TestConfigDTO{" +
-                "taskNames=" + taskNames +
+                "id=" + id +
+                ", taskNames=" + tasksInCorrectOrder +
                 ", labels=" + labels +
                 '}';
     }
+
+
 }

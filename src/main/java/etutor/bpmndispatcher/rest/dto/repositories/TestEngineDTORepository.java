@@ -1,4 +1,4 @@
-package etutor.bpmndispatcher.rest.dto.entities.repositories;
+package etutor.bpmndispatcher.rest.dto.repositories;
 
 import etutor.bpmndispatcher.rest.dto.entities.TestEngineDTO;
 import org.springframework.data.jpa.repository.JpaRepository;

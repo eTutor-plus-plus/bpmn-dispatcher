@@ -11,6 +11,8 @@ public class ApplicationProperties {
 
     private DataSource datasource = new DataSource();
 
+    private Grading grading = new Grading();
+
 
     public Async getAsync() {
         return async;
@@ -26,6 +28,14 @@ public class ApplicationProperties {
 
     public void setDatasource(DataSource datasource) {
         this.datasource = datasource;
+    }
+
+    public Grading getGrading() {
+        return grading;
+    }
+
+    public void setGrading(Grading grading) {
+        this.grading = grading;
     }
 
     /**
@@ -128,6 +138,57 @@ public class ApplicationProperties {
 
         public void setMaxPoolSize(int maxPoolSize) {
             this.maxPoolSize = maxPoolSize;
+        }
+    }
+
+    /**
+     * The properties for the grading package
+     */
+    public static class Grading {
+        private String connSuperUser;
+        private String connSuperPwd;
+        private String corsPolicy;
+        private String JDBCDriver;
+        private long sleepDuration;
+
+        public String getConnSuperUser() {
+            return connSuperUser;
+        }
+
+        public void setConnSuperUser(String connSuperUser) {
+            this.connSuperUser = connSuperUser;
+        }
+
+        public String getConnSuperPwd() {
+            return connSuperPwd;
+        }
+
+        public void setConnSuperPwd(String connSuperPwd) {
+            this.connSuperPwd = connSuperPwd;
+        }
+
+        public String getCorsPolicy() {
+            return corsPolicy;
+        }
+
+        public void setCorsPolicy(String corsPolicy) {
+            this.corsPolicy = corsPolicy;
+        }
+
+        public String getJDBCDriver() {
+            return JDBCDriver;
+        }
+
+        public void setJDBCDriver(String JDBCDriver) {
+            this.JDBCDriver = JDBCDriver;
+        }
+
+        public long getSleepDuration() {
+            return sleepDuration;
+        }
+
+        public void setSleepDuration(long sleepDuration) {
+            this.sleepDuration = sleepDuration;
         }
     }
 }

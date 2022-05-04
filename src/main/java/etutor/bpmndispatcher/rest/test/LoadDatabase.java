@@ -3,8 +3,8 @@ package etutor.bpmndispatcher.rest.test;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import etutor.bpmndispatcher.rest.dto.entities.TestConfigDTO;
 import etutor.bpmndispatcher.rest.dto.entities.TestEngineDTO;
-import etutor.bpmndispatcher.rest.dto.entities.repositories.TestConfigDTORepository;
-import etutor.bpmndispatcher.rest.dto.entities.repositories.TestEngineDTORepository;
+import etutor.bpmndispatcher.rest.dto.repositories.TestConfigDTORepository;
+import etutor.bpmndispatcher.rest.dto.repositories.TestEngineDTORepository;
 import okhttp3.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,13 +29,15 @@ class LoadDatabase {
 //            log.info("Preloading " + testEngineDTORepository.save(new TestEngineDTO()));
 //        };
         return args -> {
+            TestConfigDTO test = repository.save(new TestConfigDTO(List.of("a", "b", "c", "Test", "Test2", "Test3"), List.of("a", "b")));
             log.info("Preloading " + repository.save(new TestConfigDTO(List.of("Test", "Test2"), List.of("Test", "Test2"))));
+            log.info("Preloading " + test);
             OkHttpClient client = new OkHttpClient().newBuilder()
                     .build();
             MediaType mediaType = MediaType.parse("application/json");
-            RequestBody body = RequestBody.create("{\"taskNames\": [\"Hallo\"]}", mediaType);
+            RequestBody body = RequestBody.create(objectMapper.writeValueAsString(test), mediaType);
             Request request = new Request.Builder()
-                    .url("http://localhost:8080/bpmn?processID=TestBpmn")
+                    .url("http://localhost:8080/bpmn?processID=BPMN-Modul-process")
                     .method("POST", body)
                     .addHeader("Content-Type", "application/json")
                     .build();

@@ -1,7 +1,9 @@
 package etutor.bpmndispatcher.service;
 
 import ch.qos.logback.classic.Logger;
+import etutor.bpmndispatcher.rest.dto.entities.GradingDTO;
 import etutor.bpmndispatcher.rest.dto.entities.Submission;
+import etutor.bpmndispatcher.service.bpmnValidationModul.BpmnRuntimeService;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -16,8 +18,10 @@ import java.util.Locale;
 public class SubmissionDispatcherService {
     private final Logger logger;
     private final RepositoryService repositoryService;
+    private final BpmnRuntimeService bpmnRuntimeService;
 
-    public SubmissionDispatcherService(RepositoryService repositoryService) {
+    public SubmissionDispatcherService(RepositoryService repositoryService, BpmnRuntimeService bpmnRuntimeService) {
+        this.bpmnRuntimeService = bpmnRuntimeService;
         this.logger = (Logger) LoggerFactory.getLogger(SubmissionDispatcherService.class);
         this.repositoryService = repositoryService;
     }
@@ -29,37 +33,36 @@ public class SubmissionDispatcherService {
      */
     @Async("asyncExecutor")
     public void run(Submission submission, Locale locale) {
-//        logger.debug("Saving submission to database");
-//        repositoryService.persistSubmission(submission);
-//        logger.debug("Finished saving submission to database");
-//        try {
-//            logger.debug("Evaluating submission");
-//            Evaluator evaluator = moduleService.getEvaluator(submission.getTaskType());
-//            if (evaluator == null) {
-//                logger.warn("Could not find evaluator for tasktype: {}", submission.getTaskType());
-//                return;
-//            }
-//            logger.debug("Analyzing submission");
-//            Analysis analysis = getAnalysis(evaluator, submission, locale);
-//            logger.debug("Finished analyzing submission");
-//            logger.debug("Grading submission");
-//            Grading grading = getGrading(evaluator, analysis, submission);
-//            logger.debug("Finished grading submission");
-//            logger.debug("Finished evaluating submission");
-//
+        logger.debug("Saving submission to database");
+        repositoryService.persistSubmission(submission);
+        logger.debug("Finished saving submission to database");
+        try {
+            logger.debug("Analyzing submission");
+            // TODO add Deploy Process
+            // TODO add getTestconfig by submission exerciseid
+            // TODO get canReachLastTask by this grade
+            // TODO optional make hints for the exercise
+            // TODO optional use parallel and xor gateway control
+//            Analysis analysis = getAnalysis(submission, locale);
+            logger.debug("Finished analyzing submission");
+            logger.debug("Grading submission");
+//            Grading grading = getGrading(analysis, submission);
+            logger.debug("Finished grading submission");
+            logger.debug("Finished evaluating submission");
+
 //            GradingDTO gradingDTO = new GradingDTO(submission.getSubmissionId(), grading);
 //            gradingDTO.setResult(evaluator.generateHTMLResult( analysis, submission.getPassedAttributes(), locale));
-//
-//            if((grading.getPoints()<grading.getMaxPoints() || grading.getPoints() == 0 )) {
+
+//            if((grading.getPoints()<grading.getMaxPoints() || grading.getPoints() == 0 ) {
 //                    logger.info("Requesting report");
 //                    DefaultReport report = getReport(evaluator, grading, analysis, submission, locale);
 //                    logger.debug("Received report");
 //                    gradingDTO.setReport(new ReportDTO(submission.getSubmissionId(), report));
 //            }
-//            persistGrading(gradingDTO);
-//        } catch(Exception e){
-//            logger.warn("Stopped Evaluation due to errors", e);
-//        }
+            persistGrading(new GradingDTO(submission.getSubmissionId(), 1, submission.getMaxPoints()));
+        } catch (Exception e) {
+            logger.warn("Stopped Evaluation due to errors", e);
+        }
     }
 //
 //    /**
@@ -105,17 +108,19 @@ public class SubmissionDispatcherService {
 //                        submission.getPassedParameters(), locale);
 //    }
 //
-//    /**
-//     * Persists the grading
-//     * @param gradingDTO the grading
-//     */
-//    public void persistGrading(GradingDTO gradingDTO){
-//        try{
-//            logger.debug("Saving grading to database");
-//            repositoryService.persistGrading(gradingDTO);
-//            logger.debug("Finished saving grading to database");
-//        }catch(Exception e){
-//            logger.error("Could not save grading");
-//        }
-//    }
+
+    /**
+     * Persists the grading
+     *
+     * @param gradingDTO the grading
+     */
+    public void persistGrading(GradingDTO gradingDTO) {
+        try {
+            logger.debug("Saving grading to database");
+            repositoryService.persistGrading(gradingDTO);
+            logger.debug("Finished saving grading to database");
+        } catch (Exception e) {
+            logger.error("Could not save grading");
+        }
+    }
 }

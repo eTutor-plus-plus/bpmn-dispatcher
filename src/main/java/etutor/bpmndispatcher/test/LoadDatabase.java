@@ -1,4 +1,4 @@
-package etutor.bpmndispatcher.rest.test;
+package etutor.bpmndispatcher.test;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import etutor.bpmndispatcher.rest.dto.entities.TestConfigDTO;

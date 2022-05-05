@@ -1,7 +1,6 @@
 package etutor.bpmndispatcher.rest.controller;
 
 import etutor.bpmndispatcher.rest.dto.entities.TestConfigDTO;
-import etutor.bpmndispatcher.service.bpmn.BpmnService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -16,11 +15,11 @@ import java.io.IOException;
 @RequestMapping("/bpmn")
 public class ETutorBpmnController {
     private final Logger logger;
-    private final BpmnService bpmnService;
+    private final BpmnControllerExerciseService bpmnControllerExerciseService;
 
-    public ETutorBpmnController(BpmnService bpmnService) {
+    public ETutorBpmnController(BpmnControllerExerciseService bpmnControllerExerciseService) {
         this.logger = LoggerFactory.getLogger(ETutorBpmnController.class);
-        this.bpmnService = bpmnService;
+        this.bpmnControllerExerciseService = bpmnControllerExerciseService;
     }
 
     /**
@@ -29,14 +28,13 @@ public class ETutorBpmnController {
      */
     @PutMapping("/exercise")
     public ResponseEntity<Long> createExercise(@RequestBody TestConfigDTO exerciseDTO) {
-        Long id;
         try {
-            id = bpmnService.createExercise(exerciseDTO);
+            Long id = bpmnControllerExerciseService.createExercise(exerciseDTO);
+            return ResponseEntity.ok(id);
         } catch (IOException e) {
             logger.warn(e.getMessage());
             return ResponseEntity.status(500).body(-1L);
         }
-        return ResponseEntity.ok(id);
     }
 
     /**
@@ -48,7 +46,7 @@ public class ETutorBpmnController {
     @GetMapping("/exercise/solution/id/{id}")
     public ResponseEntity<TestConfigDTO> getSolutionAndSorting(@PathVariable Long id) {
         try {
-            return ResponseEntity.ok(bpmnService.read(id));
+            return ResponseEntity.ok(bpmnControllerExerciseService.read(id));
         } catch (Exception e) {
             logger.error(e.getMessage());
             return ResponseEntity.status(500).body(null);
@@ -66,7 +64,7 @@ public class ETutorBpmnController {
     public ResponseEntity<Long> updateExercise(@RequestBody TestConfigDTO testConfigDTO, @PathVariable Long id) {
         logger.info("Update Exercise: " + testConfigDTO);
         try {
-            return ResponseEntity.ok(bpmnService.updateExercise(testConfigDTO, id));
+            return ResponseEntity.ok(bpmnControllerExerciseService.updateExercise(testConfigDTO, id));
         } catch (Exception e) {
             logger.error(e.getMessage());
             return ResponseEntity.status(500).body(-1L);
@@ -81,10 +79,9 @@ public class ETutorBpmnController {
      */
     @DeleteMapping("exercise/id/{id}")
     public ResponseEntity<String> deleteExercise(@PathVariable Long id) {
-        String response = "Exercise with id " + id + " deleted";
         try {
-            bpmnService.deleteExercise(id);
-            return ResponseEntity.ok(response);
+            bpmnControllerExerciseService.deleteExercise(id);
+            return ResponseEntity.ok("Exercise with id " + id + " deleted");
         } catch (Exception e) {
             logger.error(e.getMessage());
         }

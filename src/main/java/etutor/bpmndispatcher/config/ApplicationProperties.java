@@ -7,6 +7,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  */
 @ConfigurationProperties(value = "application")
 public class ApplicationProperties {
+    private ApiUrlBpmnModul apiUrlBpmnModul = new ApiUrlBpmnModul();
+
     private Async async = new Async();
 
     private DataSource datasource = new DataSource();
@@ -36,6 +38,18 @@ public class ApplicationProperties {
 
     public void setGrading(Grading grading) {
         this.grading = grading;
+    }
+
+    public static class ApiUrlBpmnModul {
+        private String apiUrlBpmnModul;
+
+        public String getApiUrlBpmnModul() {
+            return apiUrlBpmnModul;
+        }
+
+        public void setApiUrlBpmnModul(String apiUrlBpmnModul) {
+            this.apiUrlBpmnModul = apiUrlBpmnModul;
+        }
     }
 
     /**

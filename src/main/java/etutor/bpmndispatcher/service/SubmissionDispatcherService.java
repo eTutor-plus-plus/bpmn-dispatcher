@@ -1,8 +1,10 @@
 package etutor.bpmndispatcher.service;
 
 import ch.qos.logback.classic.Logger;
+import etutor.bpmndispatcher.config.ApplicationProperties;
 import etutor.bpmndispatcher.rest.dto.entities.GradingDTO;
 import etutor.bpmndispatcher.rest.dto.entities.Submission;
+import etutor.bpmndispatcher.rest.dto.repositories.TestConfigDTORepository;
 import etutor.bpmndispatcher.service.bpmnValidationModul.BpmnRuntimeService;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
@@ -19,9 +21,13 @@ public class SubmissionDispatcherService {
     private final Logger logger;
     private final RepositoryService repositoryService;
     private final BpmnRuntimeService bpmnRuntimeService;
+    private final TestConfigDTORepository testConfigDTORepository;
+    private final ApplicationProperties applicationProperties;
 
-    public SubmissionDispatcherService(RepositoryService repositoryService, BpmnRuntimeService bpmnRuntimeService) {
+    public SubmissionDispatcherService(RepositoryService repositoryService, BpmnRuntimeService bpmnRuntimeService, TestConfigDTORepository testConfigDTORepository, ApplicationProperties applicationProperties) {
         this.bpmnRuntimeService = bpmnRuntimeService;
+        this.testConfigDTORepository = testConfigDTORepository;
+        this.applicationProperties = applicationProperties;
         this.logger = (Logger) LoggerFactory.getLogger(SubmissionDispatcherService.class);
         this.repositoryService = repositoryService;
     }
@@ -38,6 +44,11 @@ public class SubmissionDispatcherService {
         logger.debug("Finished saving submission to database");
         try {
             logger.debug("Analyzing submission");
+//            TestConfigDTO testConfigDTO = testConfigDTORepository.getById((long) submission.getExerciseId());
+//            String deployID = bpmnRuntimeService.deployBpmn(submission.getPassedAttributes().get("submission"));
+//            logger.warn(testConfigDTO.toString());
+//            boolean deleteResult = bpmnRuntimeService.deleteProcess(deployID);
+//            logger.warn(String.valueOf(deleteResult));
             // TODO add Deploy Process
             // TODO add getTestconfig by submission exerciseid
             // TODO get canReachLastTask by this grade

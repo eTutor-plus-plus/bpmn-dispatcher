@@ -40,6 +40,14 @@ public class ApplicationProperties {
         this.grading = grading;
     }
 
+    public ApiUrlBpmnModul getApiUrlBpmnModul() {
+        return apiUrlBpmnModul;
+    }
+
+    public void setApiUrlBpmnModul(ApiUrlBpmnModul apiUrlBpmnModul) {
+        this.apiUrlBpmnModul = apiUrlBpmnModul;
+    }
+
     public static class ApiUrlBpmnModul {
         private String apiUrlBpmnModul;
 

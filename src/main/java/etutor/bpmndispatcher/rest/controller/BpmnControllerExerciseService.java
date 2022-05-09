@@ -16,6 +16,7 @@ public class BpmnControllerExerciseService {
     private final SubmissionDispatcherService dispatcherService;
     private final GradingDTORepository gradingDTORepository;
     private final TestConfigDTORepository testConfigDTORepository;
+
     private final String TASK_TYPE = "bpmn";
 
     public BpmnControllerExerciseService(ApplicationProperties properties, SubmissionDispatcherService dispatcherService, GradingDTORepository gradingDTORepository, TestConfigDTORepository testConfigDTORepository) {

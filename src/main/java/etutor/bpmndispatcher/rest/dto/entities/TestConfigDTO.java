@@ -1,23 +1,35 @@
 package etutor.bpmndispatcher.rest.dto.entities;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import etutor.bpmndispatcher.rest.dto.interfaces.TestConfig_Interface;
 import net.minidev.json.annotate.JsonIgnore;
 
 import javax.persistence.*;
+import javax.transaction.Transactional;
 import java.io.Serializable;
 import java.util.List;
 
 @Entity
+@JsonIgnoreProperties(ignoreUnknown = true)
+@Transactional
 public class TestConfigDTO implements TestConfig_Interface, Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @JsonIgnore
-    private Long id;
+    private int id;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = "test_configdto_tasks_in_correct_order",
+            joinColumns = @JoinColumn(name = "config_id"))
+    @MapKeyColumn(name = "attribute_key")
+    @Column(name = "tasks_in_correct_order")
     private List<String> tasksInCorrectOrder = new java.util.ArrayList<>();
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = "test_configdto_labels",
+            joinColumns = @JoinColumn(name = "config_id"))
+    @MapKeyColumn(name = "attribute_key")
+    @Column(name = "labels")
     private List<String> labels = new java.util.ArrayList<>();
 
     public TestConfigDTO() {
@@ -28,11 +40,11 @@ public class TestConfigDTO implements TestConfig_Interface, Serializable {
         this.labels = labels;
     }
 
-    public Long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -56,10 +68,23 @@ public class TestConfigDTO implements TestConfig_Interface, Serializable {
     public String toString() {
         return "TestConfigDTO{" +
                 "id=" + id +
-                ", taskNames=" + tasksInCorrectOrder +
+                ", tasksInCorrectOrder=" + tasksInCorrectOrder +
                 ", labels=" + labels +
                 '}';
     }
-
-
 }
+
+//    @ElementCollection(targetClass = String.class)
+//    @CollectionTable(name = "test_configdto_tasks_in_correct_order",
+//            joinColumns = {@JoinColumn(name = "test_configdto_id")})
+//    @Column(name = "tasks_in_correct_order", length = 2048)
+//    @Column(name = "tasks_in_correct_order")
+//    @ElementCollection(targetClass = String.class)
+//    private List<String> tasksInCorrectOrder;
+//    //    @ElementCollection(targetClass = String.class)
+////    @CollectionTable(name = "test_configdto_labels",
+////            joinColumns = {@JoinColumn(name = "test_configdto_id")})
+////    @Column(name = "labels", length = 2048)
+//    @Column(name = "labels")
+//    @ElementCollection(targetClass = String.class)
+//    private List<String> labels;

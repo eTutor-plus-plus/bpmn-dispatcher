@@ -2,15 +2,19 @@ package etutor.bpmndispatcher.rest.dto.entities;
 
 
 import etutor.bpmndispatcher.rest.dto.entities.testEngine.TestEngineRuntimeDTO;
+import net.minidev.json.annotate.JsonIgnore;
 
 import javax.persistence.*;
+import javax.transaction.Transactional;
 
 @Entity
+@Transactional
 public class TestEngineDTO {
     @OneToOne(cascade = {CascadeType.ALL})
-    @JoinColumn(name = "testEngineRuntimeDTO")
+    @JoinColumn(name = "test_engine_runtimedto", referencedColumnName = "id")
     public TestEngineRuntimeDTO testEngineRuntimeDTO;
     @Id
+    @JsonIgnore
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 

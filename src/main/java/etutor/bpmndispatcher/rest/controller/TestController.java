@@ -1,6 +1,6 @@
 package etutor.bpmndispatcher.rest.controller;
 
-import etutor.bpmndispatcher.rest.service.bpmnValidationModul.BpmnDeploymentService;
+import etutor.bpmndispatcher.service.bpmnValidationModul.BpmnDeploymentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.configurationprocessor.json.JSONException;

@@ -1,5 +1,7 @@
 package etutor.bpmndispatcher.rest.dto.entities.testEngine;
 
+import net.minidev.json.annotate.JsonIgnore;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -8,6 +10,7 @@ import javax.persistence.Id;
 @Entity
 public class TestEngineRuntimeDTO {
     @Id
+    @JsonIgnore
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 

@@ -2,10 +2,10 @@ package etutor.bpmndispatcher.service;
 
 import ch.qos.logback.classic.Logger;
 import etutor.bpmndispatcher.config.ApplicationProperties;
+import etutor.bpmndispatcher.evaluation.Analysis;
 import etutor.bpmndispatcher.rest.dto.entities.GradingDTO;
 import etutor.bpmndispatcher.rest.dto.entities.Submission;
-import etutor.bpmndispatcher.rest.dto.repositories.TestConfigDTORepository;
-import etutor.bpmndispatcher.rest.service.bpmnValidationModul.BpmnRuntimeService;
+import etutor.bpmndispatcher.service.bpmnValidationModul.BpmnAnalyseService;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -20,13 +20,12 @@ import java.util.Locale;
 public class SubmissionDispatcherService {
     private final Logger logger;
     private final RepositoryService repositoryService;
-    private final BpmnRuntimeService bpmnRuntimeService;
-    private final TestConfigDTORepository testConfigDTORepository;
+
+    private final BpmnAnalyseService bpmnAnalyseService;
     private final ApplicationProperties applicationProperties;
 
-    public SubmissionDispatcherService(RepositoryService repositoryService, BpmnRuntimeService bpmnRuntimeService, TestConfigDTORepository testConfigDTORepository, ApplicationProperties applicationProperties) {
-        this.bpmnRuntimeService = bpmnRuntimeService;
-        this.testConfigDTORepository = testConfigDTORepository;
+    public SubmissionDispatcherService(RepositoryService repositoryService, BpmnAnalyseService bpmnAnalyseService, ApplicationProperties applicationProperties) {
+        this.bpmnAnalyseService = bpmnAnalyseService;
         this.applicationProperties = applicationProperties;
         this.logger = (Logger) LoggerFactory.getLogger(SubmissionDispatcherService.class);
         this.repositoryService = repositoryService;
@@ -44,17 +43,7 @@ public class SubmissionDispatcherService {
         logger.debug("Finished saving submission to database");
         try {
             logger.debug("Analyzing submission");
-//            TestConfigDTO testConfigDTO = testConfigDTORepository.getById((long) submission.getExerciseId());
-//            String deployID = bpmnRuntimeService.deployBpmn(submission.getPassedAttributes().get("submission"));
-//            logger.warn(testConfigDTO.toString());
-//            boolean deleteResult = bpmnRuntimeService.deleteProcess(deployID);
-//            logger.warn(String.valueOf(deleteResult));
-            // TODO add Deploy Process
-            // TODO add getTestconfig by submission exerciseid
-            // TODO get canReachLastTask by this grade
-            // TODO optional make hints for the exercise
-            // TODO optional use parallel and xor gateway control
-//            Analysis analysis = getAnalysis(submission, locale);
+            Analysis analysis = getAnalysis(submission, locale);
             logger.debug("Finished analyzing submission");
             logger.debug("Grading submission");
 //            Grading grading = getGrading(analysis, submission);
@@ -75,7 +64,19 @@ public class SubmissionDispatcherService {
             logger.warn("Stopped Evaluation due to errors", e);
         }
     }
-//
+
+    /**
+     * Calls the analyze() method of the provided Evaluator
+     *
+     * @param submission the submission
+     * @return the Analysis
+     * @throws Exception if an error occurs
+     */
+    public Analysis getAnalysis(Submission submission, Locale locale) throws Exception {
+        return this.bpmnAnalyseService.analyze(submission, locale);
+    }
+
+    //
 //    /**
 //     * Calls the grade() method of the provided evaluator
 //     * @param evaluator the evaluator
@@ -90,18 +91,7 @@ public class SubmissionDispatcherService {
 //                        submission.getPassedAttributes(), submission.getPassedParameters());
 //    }
 //
-//    /**
-//     * Calls the analyze() method of the provided Evaluator
-//     * @param evaluator the evaluator
-//     * @param submission the submission
-//     * @return the Analysis
-//     * @throws Exception if an error occurs
-//     */
-//    public Analysis getAnalysis(Evaluator evaluator, Submission submission, Locale locale) throws Exception {
-//           return evaluator
-//                    .analyze(submission.getExerciseId(),
-//                            -1, submission.getPassedAttributes(), submission.getPassedParameters(), locale);
-//    }
+
 //
 //    /**
 //     * Calls the report() method of the provided evaluator

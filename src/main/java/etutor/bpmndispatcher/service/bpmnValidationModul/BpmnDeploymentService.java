@@ -1,4 +1,4 @@
-package etutor.bpmndispatcher.rest.service.bpmnValidationModul;
+package etutor.bpmndispatcher.service.bpmnValidationModul;
 
 import etutor.bpmndispatcher.config.ApplicationProperties;
 import okhttp3.*;

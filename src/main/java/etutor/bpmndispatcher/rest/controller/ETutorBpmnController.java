@@ -28,13 +28,13 @@ public class ETutorBpmnController {
      * @return a ResponseEntity with ID
      */
     @PostMapping("/exercise")
-    public ResponseEntity<Long> createExercise(@RequestBody TestConfigDTO exerciseDTO) {
+    public ResponseEntity<Integer> createExercise(@RequestBody TestConfigDTO exerciseDTO) {
         try {
-            Long id = bpmnControllerExerciseService.createExercise(exerciseDTO);
+            int id = bpmnControllerExerciseService.createExercise(exerciseDTO);
             return ResponseEntity.ok(id);
         } catch (IOException e) {
             logger.warn(e.getMessage());
-            return ResponseEntity.status(500).body(-1L);
+            return ResponseEntity.status(500).body(-1);
         }
     }
 
@@ -45,7 +45,7 @@ public class ETutorBpmnController {
      * @return an Exercise
      */
     @GetMapping("/exercise/solution/id/{id}")
-    public ResponseEntity<TestConfigDTO> getSolutionAndSorting(@PathVariable Long id) {
+    public ResponseEntity<TestConfigDTO> getSolutionAndSorting(@PathVariable int id) {
         try {
             return ResponseEntity.ok(bpmnControllerExerciseService.read(id));
         } catch (Exception e) {
@@ -62,13 +62,13 @@ public class ETutorBpmnController {
      * @return a ResponseEntity
      */
     @PostMapping("exercise/id/{id}")
-    public ResponseEntity<Long> updateExercise(@RequestBody TestConfigDTO testConfigDTO, @PathVariable Long id) {
+    public ResponseEntity<Integer> updateExercise(@RequestBody TestConfigDTO testConfigDTO, @PathVariable int id) {
         logger.info("Update Exercise: " + testConfigDTO);
         try {
             return ResponseEntity.ok(bpmnControllerExerciseService.updateExercise(testConfigDTO, id));
         } catch (Exception e) {
             logger.error(e.getMessage());
-            return ResponseEntity.status(500).body(-1L);
+            return ResponseEntity.status(500).body(-1);
         }
     }
 
@@ -79,7 +79,7 @@ public class ETutorBpmnController {
      * @return a ResponseEntity
      */
     @DeleteMapping("exercise/id/{id}")
-    public ResponseEntity<String> deleteExercise(@PathVariable Long id) {
+    public ResponseEntity<String> deleteExercise(@PathVariable int id) {
         try {
             bpmnControllerExerciseService.deleteExercise(id);
             return ResponseEntity.ok("Exercise with id " + id + " deleted");

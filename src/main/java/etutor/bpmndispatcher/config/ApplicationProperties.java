@@ -8,14 +8,10 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(value = "application")
 public class ApplicationProperties {
     private ApiUrlBpmnModul apiUrlBpmnModul = new ApiUrlBpmnModul();
-
     private Async async = new Async();
-
     private DataSource datasource = new DataSource();
-
     private Grading grading = new Grading();
     private Deployment deployment = new Deployment();
-
 
     public Async getAsync() {
         return async;
@@ -58,14 +54,14 @@ public class ApplicationProperties {
     }
 
     public static class ApiUrlBpmnModul {
-        private String apiUrlBpmnModul;
+        private String url;
 
-        public String getApiUrlBpmnModul() {
-            return apiUrlBpmnModul;
+        public String getUrl() {
+            return url;
         }
 
-        public void setApiUrlBpmnModul(String apiUrlBpmnModul) {
-            this.apiUrlBpmnModul = apiUrlBpmnModul;
+        public void setUrl(String url) {
+            this.url = url;
         }
     }
 

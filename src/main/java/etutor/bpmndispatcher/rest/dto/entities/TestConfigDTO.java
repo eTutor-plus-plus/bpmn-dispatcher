@@ -19,13 +19,13 @@ public class TestConfigDTO implements TestConfig_Interface, Serializable {
     @JsonIgnore
     private int id;
 
-    @ElementCollection(fetch = FetchType.LAZY)
+    @ElementCollection
     @CollectionTable(name = "test_configdto_tasks_in_correct_order",
             joinColumns = @JoinColumn(name = "config_id"))
     @MapKeyColumn(name = "attribute_key")
     @Column(name = "tasks_in_correct_order")
     private List<String> tasksInCorrectOrder = new java.util.ArrayList<>();
-    @ElementCollection(fetch = FetchType.LAZY)
+    @ElementCollection
     @CollectionTable(name = "test_configdto_labels",
             joinColumns = @JoinColumn(name = "config_id"))
     @MapKeyColumn(name = "attribute_key")

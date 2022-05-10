@@ -27,7 +27,7 @@ public class TestController {
     @PostMapping(path = "")
     public ResponseEntity<String> deployBPMN(@RequestBody String bpmnXml) {
         if (bpmnXml == null || bpmnXml.isBlank()) return ResponseEntity.status(500).body("no Bpmn");
-        logger.info(bpmnXml);
+//        logger.info(bpmnXml);
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("test", "test");
@@ -39,7 +39,7 @@ public class TestController {
         String xml = null;
         try {
             xml = jsonObject.getString("xml");
-            logger.info(xml);
+//            logger.info(xml);
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }

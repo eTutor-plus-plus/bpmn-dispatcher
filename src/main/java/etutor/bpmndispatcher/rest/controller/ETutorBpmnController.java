@@ -1,6 +1,7 @@
 package etutor.bpmndispatcher.rest.controller;
 
 import etutor.bpmndispatcher.rest.dto.entities.TestConfigDTO;
+import etutor.bpmndispatcher.rest.service.BpmnControllerExerciseService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;

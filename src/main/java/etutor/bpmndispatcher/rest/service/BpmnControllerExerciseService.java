@@ -1,4 +1,4 @@
-package etutor.bpmndispatcher.rest.controller;
+package etutor.bpmndispatcher.rest.service;
 
 import etutor.bpmndispatcher.config.ApplicationProperties;
 import etutor.bpmndispatcher.rest.dto.entities.TestConfigDTO;

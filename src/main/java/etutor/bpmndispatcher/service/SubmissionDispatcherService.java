@@ -5,7 +5,7 @@ import etutor.bpmndispatcher.config.ApplicationProperties;
 import etutor.bpmndispatcher.rest.dto.entities.GradingDTO;
 import etutor.bpmndispatcher.rest.dto.entities.Submission;
 import etutor.bpmndispatcher.rest.dto.repositories.TestConfigDTORepository;
-import etutor.bpmndispatcher.service.bpmnValidationModul.BpmnRuntimeService;
+import etutor.bpmndispatcher.rest.service.bpmnValidationModul.BpmnRuntimeService;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;

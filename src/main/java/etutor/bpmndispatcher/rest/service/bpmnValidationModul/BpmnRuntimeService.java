@@ -1,4 +1,4 @@
-package etutor.bpmndispatcher.service.bpmnValidationModul;
+package etutor.bpmndispatcher.rest.service.bpmnValidationModul;
 
 import ch.qos.logback.classic.Logger;
 import etutor.bpmndispatcher.config.ApplicationProperties;

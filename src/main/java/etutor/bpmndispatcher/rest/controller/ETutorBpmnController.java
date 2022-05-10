@@ -26,7 +26,7 @@ public class ETutorBpmnController {
      * @param exerciseDTO = Testconfig
      * @return a ResponseEntity with ID
      */
-    @PutMapping("/exercise")
+    @PostMapping("/exercise")
     public ResponseEntity<Long> createExercise(@RequestBody TestConfigDTO exerciseDTO) {
         try {
             Long id = bpmnControllerExerciseService.createExercise(exerciseDTO);

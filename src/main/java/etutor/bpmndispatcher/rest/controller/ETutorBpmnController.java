@@ -4,6 +4,7 @@ import etutor.bpmndispatcher.rest.dto.entities.TestConfigDTO;
 import etutor.bpmndispatcher.rest.service.BpmnControllerExerciseService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,7 +35,7 @@ public class ETutorBpmnController {
             return ResponseEntity.ok(id);
         } catch (IOException e) {
             logger.warn(e.getMessage());
-            return ResponseEntity.status(500).body(-1);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
     }
 
@@ -50,7 +51,7 @@ public class ETutorBpmnController {
             return ResponseEntity.ok(bpmnControllerExerciseService.read(id));
         } catch (Exception e) {
             logger.error(e.getMessage());
-            return ResponseEntity.status(500).body(null);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
 
@@ -68,7 +69,7 @@ public class ETutorBpmnController {
             return ResponseEntity.ok(bpmnControllerExerciseService.updateExercise(testConfigDTO, id));
         } catch (Exception e) {
             logger.error(e.getMessage());
-            return ResponseEntity.status(500).body(-1);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
 
@@ -86,7 +87,7 @@ public class ETutorBpmnController {
         } catch (Exception e) {
             logger.error(e.getMessage());
         }
-        return ResponseEntity.status(500).body("Could not delete exercise with id " + id);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Could not delete exercise with id " + id);
     }
 
 }

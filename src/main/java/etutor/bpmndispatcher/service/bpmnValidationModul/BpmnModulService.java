@@ -13,6 +13,7 @@ import etutor.bpmndispatcher.rest.dto.repositories.TestConfigDTORepository;
 import etutor.bpmndispatcher.rest.dto.repositories.TestEngineDTORepository;
 import etutor.bpmndispatcher.service.ExerciseNotValidException;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.stereotype.Service;
@@ -35,16 +36,19 @@ public class BpmnModulService {
     private final BpmnTestEngineConnector bpmnTestEngineConnector;
     //    private final TestConfigDTORepository testConfigDTORepository;
     private final TestEngineDTORepository testEngineDTORepository;
+    private final ServerProperties serverProperties;
+
 
     private List<String> currentIds;
     private List<String> currentDefinitionId;
     private boolean deploymentSuccesfull;
 
-    public BpmnModulService(BpmnDeploymentService bpmnDeploymentService, BpmnTestEngineConnector bpmnTestEngineConnector, TestConfigDTORepository testConfigDTORepository, TestEngineDTORepository testEngineDTORepository) {
+    public BpmnModulService(BpmnDeploymentService bpmnDeploymentService, BpmnTestEngineConnector bpmnTestEngineConnector, TestConfigDTORepository testConfigDTORepository, TestEngineDTORepository testEngineDTORepository, ServerProperties serverProperties) {
         this.bpmnDeploymentService = bpmnDeploymentService;
         this.bpmnTestEngineConnector = bpmnTestEngineConnector;
 //        this.testConfigDTORepository = testConfigDTORepository;
         this.testEngineDTORepository = testEngineDTORepository;
+        this.serverProperties = serverProperties;
         this.logger = (Logger) LoggerFactory.getLogger(BpmnModulService.class);
     }
 
@@ -136,9 +140,8 @@ public class BpmnModulService {
     private TestConfigDTO fetchTestConfig(int exerciseId) throws IOException, InterruptedException {
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:8084/bpmn/exercise/solution/id/" + exerciseId))
+                .uri(URI.create("http://localhost:" + serverProperties.getPort() + "/bpmn/exercise/solution/id/" + exerciseId))
                 .build();
-
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         if (response.statusCode() == 200) return objectMapper.readValue(response.body(), TestConfigDTO.class);
         throw new IOException("no config");

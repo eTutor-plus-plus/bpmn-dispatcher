@@ -3,9 +3,10 @@ package etutor.bpmndispatcher.service;
 import ch.qos.logback.classic.Logger;
 import etutor.bpmndispatcher.config.ApplicationProperties;
 import etutor.bpmndispatcher.evaluation.Analysis;
+import etutor.bpmndispatcher.evaluation.Grading;
 import etutor.bpmndispatcher.rest.dto.entities.GradingDTO;
 import etutor.bpmndispatcher.rest.dto.entities.Submission;
-import etutor.bpmndispatcher.service.bpmnValidationModul.BpmnAnalyseService;
+import etutor.bpmndispatcher.service.bpmnValidationModul.BpmnModulService;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -20,12 +21,11 @@ import java.util.Locale;
 public class SubmissionDispatcherService {
     private final Logger logger;
     private final RepositoryService repositoryService;
-
-    private final BpmnAnalyseService bpmnAnalyseService;
+    private final BpmnModulService bpmnModulService;
     private final ApplicationProperties applicationProperties;
 
-    public SubmissionDispatcherService(RepositoryService repositoryService, BpmnAnalyseService bpmnAnalyseService, ApplicationProperties applicationProperties) {
-        this.bpmnAnalyseService = bpmnAnalyseService;
+    public SubmissionDispatcherService(RepositoryService repositoryService, BpmnModulService bpmnModulService, ApplicationProperties applicationProperties) {
+        this.bpmnModulService = bpmnModulService;
         this.applicationProperties = applicationProperties;
         this.logger = (Logger) LoggerFactory.getLogger(SubmissionDispatcherService.class);
         this.repositoryService = repositoryService;
@@ -46,11 +46,11 @@ public class SubmissionDispatcherService {
             Analysis analysis = getAnalysis(submission, locale);
             logger.debug("Finished analyzing submission");
             logger.debug("Grading submission");
-//            Grading grading = getGrading(analysis, submission);
+            Grading grading = getGrading(analysis, submission);
             logger.debug("Finished grading submission");
             logger.debug("Finished evaluating submission");
 
-//            GradingDTO gradingDTO = new GradingDTO(submission.getSubmissionId(), grading);
+            GradingDTO gradingDTO = new GradingDTO(submission.getSubmissionId(), grading);
 //            gradingDTO.setResult(evaluator.generateHTMLResult( analysis, submission.getPassedAttributes(), locale));
 
 //            if((grading.getPoints()<grading.getMaxPoints() || grading.getPoints() == 0 ) {
@@ -59,7 +59,7 @@ public class SubmissionDispatcherService {
 //                    logger.debug("Received report");
 //                    gradingDTO.setReport(new ReportDTO(submission.getSubmissionId(), report));
 //            }
-            persistGrading(new GradingDTO(submission.getSubmissionId(), 1, submission.getMaxPoints()));
+            persistGrading(gradingDTO);
         } catch (Exception e) {
             logger.warn("Stopped Evaluation due to errors", e);
         }
@@ -73,24 +73,22 @@ public class SubmissionDispatcherService {
      * @throws Exception if an error occurs
      */
     public Analysis getAnalysis(Submission submission, Locale locale) throws Exception {
-        return this.bpmnAnalyseService.analyze(submission, locale);
+        return this.bpmnModulService.analyze(submission, locale);
     }
 
-    //
-//    /**
-//     * Calls the grade() method of the provided evaluator
-//     * @param evaluator the evaluator
-//     * @param analysis the analysis
-//     * @param submission the submission
-//     * @return the Grading
-//     * @throws Exception if an error occurs
-//     */
-//    public Grading getGrading(Evaluator evaluator, Analysis analysis, Submission submission) throws Exception {
-//        return  evaluator
-//                .grade(analysis, submission.getMaxPoints(),
-//                        submission.getPassedAttributes(), submission.getPassedParameters());
-//    }
-//
+
+    /**
+     * Calls the grade() method of the provided evaluator
+     *
+     * @param analysis   the analysis
+     * @param submission the submission
+     * @return the Grading
+     * @throws Exception if an error occurs
+     */
+    public Grading getGrading(Analysis analysis, Submission submission) throws Exception {
+        return this.bpmnModulService.grade(analysis, submission);
+    }
+
 
 //
 //    /**

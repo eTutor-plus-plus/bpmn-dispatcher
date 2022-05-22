@@ -9,6 +9,7 @@ import java.util.UUID;
 
 public class SubmissionId {
     private String submissionId;
+    private String isBpmnTask;
 
     public SubmissionId() {
         // empty constructor
@@ -40,5 +41,13 @@ public class SubmissionId {
 
     public String toString() {
         return submissionId;
+    }
+
+    public String getIsBpmnTask() {
+        return isBpmnTask;
+    }
+
+    public void setIsBpmnTask(String isBpmnTask) {
+        this.isBpmnTask = isBpmnTask;
     }
 }

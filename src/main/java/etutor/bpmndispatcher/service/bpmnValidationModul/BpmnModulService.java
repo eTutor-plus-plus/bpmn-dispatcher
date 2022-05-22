@@ -53,6 +53,8 @@ public class BpmnModulService {
     }
 
     public Analysis analyze(Submission submission, Locale locale) throws Exception {
+        // TODO fetch submission max points from DB
+
         Analysis analysis = new DefaultAnalysis();
         currentIds = new ArrayList<>();
         currentDefinitionId = new ArrayList<>();
@@ -82,6 +84,7 @@ public class BpmnModulService {
         if (result != null) {
             logger.info(result.toString());
             testEngineDTORepository.save(result);
+            logger.warn("Engine" + result.getTestEngineRuntimeDTO().isProcessInOrder());
             if (result.getTestEngineRuntimeDTO().isProcessInOrder()) {
                 grading.setPoints(submission.getMaxPoints());
             }
@@ -100,7 +103,7 @@ public class BpmnModulService {
     }
 
     private void deploySubmissionBpmn(Submission submission) throws ExerciseNotValidException {
-        String xml = submission.getPassedAttributes().get("xml");
+        String xml = submission.getPassedAttributes().get("submission");
         String result;
         if (xml == null || xml.isBlank()) throw new ExerciseNotValidException("no Bpmn in Submission");
         try {

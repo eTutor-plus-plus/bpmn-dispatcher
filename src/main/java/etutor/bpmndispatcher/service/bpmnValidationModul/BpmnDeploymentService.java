@@ -52,7 +52,7 @@ public class BpmnDeploymentService {
         MediaType JSON = MediaType.parse("application/json; charset=utf-8");
         RequestBody body = RequestBody.create("{}", JSON);
         Request request = new Request.Builder()
-                .url("http://localhost:8080/engine-rest/process-definition/" + definitionID)
+                .url(this.applicationproperties.getApiUrlBpmnModul().getUrl()+"engine-rest/process-definition/" + definitionID)
                 .method("DELETE", body)
                 .build();
         try {

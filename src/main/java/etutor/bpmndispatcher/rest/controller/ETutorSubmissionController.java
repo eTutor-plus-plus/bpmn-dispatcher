@@ -59,6 +59,7 @@ public class ETutorSubmissionController {
 
         logger.info("Calculating submission-ID");
         submissionId = SubmissionId.createId(submission);
+        submissionId.setIsBpmnTask("true");
         logger.info("Finished calculating submission-ID: {}", submissionId.getSubmissionId());
 
         submissionDispatcherService.run(submission, mapLangToLocale(language));

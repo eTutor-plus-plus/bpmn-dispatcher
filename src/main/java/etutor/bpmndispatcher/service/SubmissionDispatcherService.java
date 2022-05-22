@@ -38,6 +38,7 @@ public class SubmissionDispatcherService {
      */
     @Async("asyncExecutor")
     public void run(Submission submission, Locale locale) {
+        logger.warn("submission " + submission.getMaxPoints());
         logger.debug("Saving submission to database");
         repositoryService.persistSubmission(submission);
         logger.debug("Finished saving submission to database");

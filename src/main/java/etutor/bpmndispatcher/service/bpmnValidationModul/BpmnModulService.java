@@ -72,7 +72,9 @@ public class BpmnModulService {
 
     public Grading grade(Analysis analysis, Submission submission) throws Exception {
         Grading grading = new DefaultGrading();
-        grading.setMaxPoints(submission.getMaxPoints());
+        // TODO update to use submission.getMaxPoints
+//        grading.setMaxPoints(submission.getMaxPoints());
+        grading.setMaxPoints(1);
         TestEngineDTO result = null;
 
         // add getTestconfig by submission exerciseid
@@ -84,9 +86,9 @@ public class BpmnModulService {
         if (result != null) {
             logger.info(result.toString());
             testEngineDTORepository.save(result);
-            logger.warn("Engine" + result.getTestEngineRuntimeDTO().isProcessInOrder());
+            logger.info("Engine" + result.getTestEngineRuntimeDTO().isProcessInOrder());
             if (result.getTestEngineRuntimeDTO().isProcessInOrder()) {
-                grading.setPoints(submission.getMaxPoints());
+                grading.setPoints(grading.getMaxPoints());
             }
         }
 

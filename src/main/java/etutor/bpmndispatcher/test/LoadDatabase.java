@@ -1,7 +1,6 @@
 package etutor.bpmndispatcher.test;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import etutor.bpmndispatcher.rest.dto.entities.TestConfigDTO;
 import etutor.bpmndispatcher.rest.dto.repositories.TestConfigDTORepository;
 import etutor.bpmndispatcher.rest.dto.repositories.TestEngineDTORepository;
 import org.slf4j.Logger;
@@ -9,8 +8,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import java.util.List;
 
 @Configuration
 class LoadDatabase {
@@ -27,9 +24,9 @@ class LoadDatabase {
 //            log.info("Preloading " + testEngineDTORepository.save(new TestEngineDTO()));
 //        };
         return args -> {
-            TestConfigDTO test = repository.save(new TestConfigDTO(List.of("a", "b", "c", "Test", "Test2", "Test3"), List.of("a", "b")));
-            log.info("Preloading " + repository.save(new TestConfigDTO(List.of("Test", "Test2"), List.of("Test", "Test2"))));
-            log.info("Preloading " + test);
+            // TestConfigDTO test = repository.save(new TestConfigDTO(List.of("a", "b", "c", "Test", "Test2", "Test3"), List.of("a", "b")));
+            // log.info("Preloading " + repository.save(new TestConfigDTO(List.of("Test", "Test2"), List.of("Test", "Test2"))));
+            // log.info("Preloading " + test);
 //            OkHttpClient client = new OkHttpClient().newBuilder()
 //                    .build();
 //            MediaType mediaType = MediaType.parse("application/json");

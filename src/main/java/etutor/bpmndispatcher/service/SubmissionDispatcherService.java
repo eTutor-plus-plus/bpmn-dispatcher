@@ -3,8 +3,10 @@ package etutor.bpmndispatcher.service;
 import ch.qos.logback.classic.Logger;
 import etutor.bpmndispatcher.config.ApplicationProperties;
 import etutor.bpmndispatcher.evaluation.Analysis;
+import etutor.bpmndispatcher.evaluation.DefaultReport;
 import etutor.bpmndispatcher.evaluation.Grading;
 import etutor.bpmndispatcher.rest.dto.entities.GradingDTO;
+import etutor.bpmndispatcher.rest.dto.entities.ReportDTO;
 import etutor.bpmndispatcher.rest.dto.entities.Submission;
 import etutor.bpmndispatcher.service.bpmnValidationModul.BpmnModulService;
 import org.slf4j.LoggerFactory;
@@ -23,10 +25,12 @@ public class SubmissionDispatcherService {
     private final RepositoryService repositoryService;
     private final BpmnModulService bpmnModulService;
     private final ApplicationProperties applicationProperties;
+    private final ReportService reportService;
 
-    public SubmissionDispatcherService(RepositoryService repositoryService, BpmnModulService bpmnModulService, ApplicationProperties applicationProperties) {
+    public SubmissionDispatcherService(RepositoryService repositoryService, BpmnModulService bpmnModulService, ApplicationProperties applicationProperties, ReportService reportService) {
         this.bpmnModulService = bpmnModulService;
         this.applicationProperties = applicationProperties;
+        this.reportService = reportService;
         this.logger = (Logger) LoggerFactory.getLogger(SubmissionDispatcherService.class);
         this.repositoryService = repositoryService;
     }
@@ -54,12 +58,12 @@ public class SubmissionDispatcherService {
             GradingDTO gradingDTO = new GradingDTO(submission.getSubmissionId(), grading);
 //            gradingDTO.setResult(evaluator.generateHTMLResult( analysis, submission.getPassedAttributes(), locale));
 
-//            if((grading.getPoints()<grading.getMaxPoints() || grading.getPoints() == 0 ) {
-//                    logger.info("Requesting report");
-//                    DefaultReport report = getReport(evaluator, grading, analysis, submission, locale);
-//                    logger.debug("Received report");
-//                    gradingDTO.setReport(new ReportDTO(submission.getSubmissionId(), report));
-//            }
+            if ((grading.getPoints() < grading.getMaxPoints() || grading.getPoints() == 0)) {
+                logger.info("Requesting report");
+                DefaultReport report = getReport(grading, analysis, locale);
+                logger.debug("Received report");
+                gradingDTO.setReport(new ReportDTO(submission.getSubmissionId(), report));
+            }
             persistGrading(gradingDTO);
         } catch (Exception e) {
             logger.warn("Stopped Evaluation due to errors", e);
@@ -91,23 +95,19 @@ public class SubmissionDispatcherService {
     }
 
 
-//
-//    /**
-//     * Calls the report() method of the provided evaluator
-//     * @param evaluator the evaluator
-//     * @param grading the grading
-//     * @param analysis the analysis
-//     * @param submission the submission
-//     * @param locale the locale
-//     * @return the report
-//     * @throws Exception if an error occurs
-//     */
-//    public DefaultReport getReport(Evaluator evaluator, Grading grading, Analysis analysis,Submission submission, Locale locale) throws Exception {
-//        return (DefaultReport) evaluator.report
-//                (analysis, grading, submission.getPassedAttributes(),
-//                        submission.getPassedParameters(), locale);
-//    }
-//
+    /**
+     * Calls the report() method of the provided evaluator
+     *
+     * @param grading  the grading
+     * @param analysis the analysis
+     * @param locale   the locale
+     * @return the report
+     * @throws Exception if an error occurs
+     */
+    public DefaultReport getReport(Grading grading, Analysis analysis, Locale locale) throws Exception {
+        return this.reportService.report(analysis, grading);
+    }
+
 
     /**
      * Persists the grading

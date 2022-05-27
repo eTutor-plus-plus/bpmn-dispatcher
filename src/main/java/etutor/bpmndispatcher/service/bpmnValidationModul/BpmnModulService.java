@@ -3,7 +3,7 @@ package etutor.bpmndispatcher.service.bpmnValidationModul;
 import ch.qos.logback.classic.Logger;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import etutor.bpmndispatcher.evaluation.Analysis;
-import etutor.bpmndispatcher.evaluation.DefaultAnalysis;
+import etutor.bpmndispatcher.evaluation.BpmnAnalysis;
 import etutor.bpmndispatcher.evaluation.DefaultGrading;
 import etutor.bpmndispatcher.evaluation.Grading;
 import etutor.bpmndispatcher.rest.dto.entities.Submission;
@@ -23,7 +23,6 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -55,14 +54,11 @@ public class BpmnModulService {
     public Analysis analyze(Submission submission, Locale locale) throws Exception {
         // TODO fetch submission max points from DB
 
-        Analysis analysis = new DefaultAnalysis();
-        currentIds = new ArrayList<>();
-        currentDefinitionId = new ArrayList<>();
-        deploymentSuccesfull = true;
+        Analysis analysis = new BpmnAnalysis();
 
         analysis.setSubmission(submission);
         // add Deploy Process
-        this.deploySubmissionBpmn(submission);
+        this.deploySubmissionBpmn(submission, analysis);
 //        if (deployementResult.containsKey(false)) {
 //            // TODO create default Analysis with hint
 //        }
@@ -71,40 +67,44 @@ public class BpmnModulService {
     }
 
     public Grading grade(Analysis analysis, Submission submission) throws Exception {
+        if (!(analysis instanceof BpmnAnalysis)) throw new ExerciseNotValidException("wrong Analysistyp");
         Grading grading = new DefaultGrading();
         // TODO update to use submission.getMaxPoints
 //        grading.setMaxPoints(submission.getMaxPoints());
-        grading.setMaxPoints(1);
-        TestEngineDTO result = null;
+        if (((BpmnAnalysis) analysis).isDeploymentSuccesful()) {
+            grading.setMaxPoints(1);
+            TestEngineDTO result = null;
 
-        // add getTestconfig by submission exerciseid
-        for (String id : currentIds) {
-            logger.info(currentIds.toString() + "------" + currentDefinitionId.toString());
-            result = this.bpmnTestEngineConnector.startTest(id, this.fetchTestConfig(submission.getExerciseId()));
-        }
-        // get canReachLastTask by this grade
-        if (result != null) {
-            logger.info(result.toString());
-            testEngineDTORepository.save(result);
-            logger.info("Engine" + result.getTestEngineRuntimeDTO().isProcessInOrder());
-            if (result.getTestEngineRuntimeDTO().isProcessInOrder()) {
-                grading.setPoints(grading.getMaxPoints());
+            // add getTestconfig by submission exerciseid
+            for (String id : ((BpmnAnalysis) analysis).getCurrentIds()) {
+                logger.info(((BpmnAnalysis) analysis).getCurrentIds().toString() + "------" + ((BpmnAnalysis) analysis).getCurrentDefinitionId().toString());
+                result = this.bpmnTestEngineConnector.startTest(id, this.fetchTestConfig(submission.getExerciseId()));
             }
-        }
+            // get canReachLastTask by this grade
+            if (result != null) {
+                logger.info(result.toString());
+                testEngineDTORepository.save(result);
+                logger.info("Engine" + result.getTestEngineRuntimeDTO().isProcessInOrder());
+                if (result.getTestEngineRuntimeDTO().isProcessInOrder()) {
+                    grading.setPoints(grading.getMaxPoints());
+                }
+            }
 
-        // TODO optional make hints for the exercise
-        // TODO optional use parallel and xor gateway control
+            // TODO optional make hints for the exercise
+            // TODO optional use parallel and xor gateway control
 
-        // remove process instance
-        if (deploymentSuccesfull) {
-            for (String currentDefinitionID : currentDefinitionId) {
-                this.removeProcessInstance(currentDefinitionID);
+            // remove process instance
+            if (((BpmnAnalysis) analysis).isDeploymentSuccesful()) {
+                for (String currentDefinitionID : ((BpmnAnalysis) analysis).getCurrentDefinitionId()) {
+                    this.removeProcessInstance(currentDefinitionID);
+                }
             }
         }
         return grading;
     }
 
-    private void deploySubmissionBpmn(Submission submission) throws ExerciseNotValidException {
+    private void deploySubmissionBpmn(Submission submission, Analysis analysis) throws ExerciseNotValidException {
+        if (!(analysis instanceof BpmnAnalysis)) throw new ExerciseNotValidException("wrong Analysistyp");
         String xml = submission.getPassedAttributes().get("submission");
         String result;
         if (xml == null || xml.isBlank()) throw new ExerciseNotValidException("no Bpmn in Submission");
@@ -114,9 +114,17 @@ public class BpmnModulService {
             throw new RuntimeException(e);
         }
         if (result.contains("ParseException")) {
-            this.deploymentSuccesfull = false;
+            logger.warn(result);
+            ((BpmnAnalysis) analysis).setDeploymentSuccesful(false);
+            try {
+                JSONObject obj = new JSONObject(result);
+                String error = obj.getString("message");
+                ((BpmnAnalysis) analysis).setError(error);
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
         } else {
-            this.deploymentSuccesfull = true;
+            ((BpmnAnalysis) analysis).setDeploymentSuccesful(true);
             try {
                 JSONObject obj = new JSONObject(result);
                 String id = obj.getString("id");
@@ -128,9 +136,9 @@ public class BpmnModulService {
                 Iterator definitionID = obj.getJSONObject("deployedProcessDefinitions").keys();
                 while (definitionID.hasNext()) {
                     String definitionId = definitionID.next().toString();
-                    currentDefinitionId.add(definitionId);
+                    ((BpmnAnalysis) analysis).getCurrentDefinitionId().add(definitionId);
 //                    logger.info(definitionID.next().toString());
-                    currentIds.add(responseObject.getJSONObject(definitionId).getString("key"));
+                    ((BpmnAnalysis) analysis).getCurrentIds().add(responseObject.getJSONObject(definitionId).getString("key"));
 //                    logger.info(responseObject.getJSONObject(definitionId).getString("key"));
                 }
 //                logger.warn(definitionID);

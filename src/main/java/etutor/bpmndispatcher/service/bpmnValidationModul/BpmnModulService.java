@@ -113,13 +113,15 @@ public class BpmnModulService {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        if (result.contains("ParseException")) {
+        if (result.contains("Exception")) {
             logger.warn(result);
             ((BpmnAnalysis) analysis).setDeploymentSuccesful(false);
             try {
                 JSONObject obj = new JSONObject(result);
-                String error = obj.getString("message");
-                ((BpmnAnalysis) analysis).setError(error);
+                String message = obj.getString("message");
+                String typ = obj.getString("type");
+                ((BpmnAnalysis) analysis).setError(typ);
+                ((BpmnAnalysis) analysis).setErrorDescription(message);
             } catch (JSONException e) {
                 throw new RuntimeException(e);
             }

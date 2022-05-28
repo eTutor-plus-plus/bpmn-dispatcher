@@ -13,7 +13,8 @@ public class ReportService {
         if (!(analysis instanceof BpmnAnalysis)) throw new ExerciseNotValidException("wrong Analysis");
 
         if (((BpmnAnalysis) analysis).getError() != null) {
-            report.setError("<p>" + ((BpmnAnalysis) analysis).getError() + "</p>");
+            report.setError("<label>" + ((BpmnAnalysis) analysis).getError() + "</label>");
+            report.setDescription("<p>" + ((BpmnAnalysis) analysis).getErrorDescription() + "</p>");
         }
 
         return report;

@@ -1,24 +1,48 @@
 package etutor.bpmndispatcher.rest.controller;
 
-import etutor.bpmndispatcher.service.bpmnValidationModul.BpmnDeploymentService;
+import etutor.bpmndispatcher.ETutorCORSPolicy;
+import etutor.bpmndispatcher.rest.dto.entities.BpmnExcercise;
+import etutor.bpmndispatcher.rest.dto.entities.TestConfigDTO;
+import etutor.bpmndispatcher.rest.dto.repositories.BpmnExcerciseRepository;
+import etutor.bpmndispatcher.rest.dto.repositories.TestConfigDTORepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/test")
+@CrossOrigin(origins = ETutorCORSPolicy.CORS_POLICY)
 public class TestController {
     private static final Logger logger = LoggerFactory.getLogger(TestController.class);
-//    private final BpmnDeploymentService bpmnDeploymentService;
 
-    public TestController(BpmnDeploymentService bpmnDeploymentService) {
-//        this.bpmnDeploymentService = bpmnDeploymentService;
+    private final BpmnExcerciseRepository repo;
+    private final TestConfigDTORepository testConfigDTORepository;
+
+    public TestController(BpmnExcerciseRepository repo, TestConfigDTORepository testConfigDTORepository) {
+        this.repo = repo;
+        this.testConfigDTORepository = testConfigDTORepository;
+    }
+
+    @PostMapping("bpmn")
+    public void save(@RequestBody Set<TestConfigDTO> excercise) {
+        BpmnExcercise test = this.repo.save(new BpmnExcercise());
+        excercise.forEach((x) -> x.setBpmnExcercise(test));
+        List<TestConfigDTO> set = this.testConfigDTORepository.saveAll(excercise);
+        logger.warn(set.toString());
+    }
+
+    @GetMapping("getTest")
+    public void get(@RequestBody Set<TestConfigDTO> excercise) {
+        BpmnExcercise test = this.repo.save(new BpmnExcercise());
+        excercise.forEach((x) -> x.setBpmnExcercise(test));
+        List<TestConfigDTO> set = this.testConfigDTORepository.saveAll(excercise);
+        logger.warn(set.toString());
     }
 
 
@@ -31,7 +55,6 @@ public class TestController {
             throw new RuntimeException(e);
         }
         if (bpmnXml == null || bpmnXml.isBlank()) return ResponseEntity.status(500).body(jsonObject_failed.toString());
-//        logger.info(bpmnXml);
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("test", "test");
@@ -41,33 +64,5 @@ public class TestController {
         }
         logger.info(jsonObject.toString());
         return ResponseEntity.ok(jsonObject.toString());
-        //        String xml = null;
-//        try {
-//            xml = jsonObject.getString("xml");
-////            logger.info(xml);
-//        } catch (JSONException e) {
-//            throw new RuntimeException(e);
-//        }
-//        if (xml != null) {
-//            try {
-//                String result = bpmnDeploymentService.deployNewBpmnWithString(xml);
-//                if (result.contains("ParseException")) {
-//                    return ResponseEntity.status(400).body(result);
-//                } else {
-//                    JSONObject obj = new JSONObject(result);
-//                    String id = obj.getString("id");
-//                    logger.info("ID:+++++++" + id);
-//                    String definitionID = obj.getJSONObject("deployedProcessDefinitions").keys().next().toString();
-//                    logger.warn(definitionID);
-//                    logger.info("---Deployed!---");
-//                    return ResponseEntity.ok(definitionID);
-//                }
-//            } catch (IOException e) {
-//                logger.warn(e.getMessage());
-//            } catch (JSONException e) {
-//                throw new RuntimeException(e);
-//            }
-//        }
-//        return ResponseEntity.status(500).body("Deployment");
     }
 }

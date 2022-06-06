@@ -1,5 +1,7 @@
 package etutor.bpmndispatcher.rest.controller;
 
+import etutor.bpmndispatcher.ETutorCORSPolicy;
+import etutor.bpmndispatcher.rest.dto.entities.BpmnExcercise;
 import etutor.bpmndispatcher.rest.dto.entities.TestConfigDTO;
 import etutor.bpmndispatcher.rest.service.BpmnControllerExerciseService;
 import org.slf4j.Logger;
@@ -9,12 +11,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * Controller for handling resources of the datalog module
  */
 @RestController
 @RequestMapping("/bpmn")
+@CrossOrigin(origins = ETutorCORSPolicy.CORS_POLICY)
 public class ETutorBpmnController {
     private final Logger logger;
     private final BpmnControllerExerciseService bpmnControllerExerciseService;
@@ -40,6 +44,21 @@ public class ETutorBpmnController {
     }
 
     /**
+     * @param exerciseDTO = Testconfig
+     * @return a ResponseEntity with ID
+     */
+    @PostMapping("/bpmnExercise")
+    public ResponseEntity<Integer> createBpmnExercise(@RequestBody List<TestConfigDTO> exerciseDTO) {
+        try {
+            int id = bpmnControllerExerciseService.createBpmnExercise(exerciseDTO);
+            return ResponseEntity.ok(id);
+        } catch (IOException e) {
+            logger.warn(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+    }
+
+    /**
      * Returns the exercise definition for a given id
      *
      * @param id the id of the exercise
@@ -54,6 +73,23 @@ public class ETutorBpmnController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
+
+    /**
+     * Returns the exercise definition for a given id
+     *
+     * @param id the id of the exercise
+     * @return an Exercise
+     */
+    @GetMapping("/bpmnExercise/id/{id}")
+    public ResponseEntity<BpmnExcercise> getExercise(@PathVariable int id) {
+        try {
+            return ResponseEntity.ok(bpmnControllerExerciseService.readBpmn(id));
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
+
 
     /**
      * Updates an exercise
@@ -74,6 +110,24 @@ public class ETutorBpmnController {
     }
 
     /**
+     * Updates an exercise
+     *
+     * @param exerciseDTO the TestConfig
+     * @param id          the id of the exercise
+     * @return a ResponseEntity
+     */
+    @PostMapping("bpmnExercise/id/{id}")
+    public ResponseEntity<Integer> updateBpmnExercise(@RequestBody List<TestConfigDTO> exerciseDTO, @PathVariable int id) {
+        logger.info("Update Exercise: " + exerciseDTO.toString());
+        try {
+            return ResponseEntity.ok(bpmnControllerExerciseService.updateBpmnExercise(exerciseDTO, id));
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
+
+    /**
      * Deletes an exercise
      *
      * @param id the id of the exercise
@@ -83,6 +137,23 @@ public class ETutorBpmnController {
     public ResponseEntity<String> deleteExercise(@PathVariable int id) {
         try {
             bpmnControllerExerciseService.deleteExercise(id);
+            return ResponseEntity.ok("Exercise with id " + id + " deleted");
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Could not delete exercise with id " + id);
+    }
+
+    /**
+     * Deletes an exercise
+     *
+     * @param id the id of the exercise
+     * @return a ResponseEntity
+     */
+    @DeleteMapping("bpmnExercise/id/{id}")
+    public ResponseEntity<String> deleteBpmnExercise(@PathVariable int id) {
+        try {
+            bpmnControllerExerciseService.deleteBpmnExercise(id);
             return ResponseEntity.ok("Exercise with id " + id + " deleted");
         } catch (Exception e) {
             logger.error(e.getMessage());

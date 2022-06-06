@@ -1,13 +1,11 @@
 package etutor.bpmndispatcher.service.bpmnValidationModul;
 
-import ch.qos.logback.classic.Logger;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import etutor.bpmndispatcher.config.ApplicationProperties;
 import etutor.bpmndispatcher.rest.dto.entities.TestConfigDTO;
 import etutor.bpmndispatcher.rest.dto.entities.TestEngineDTO;
 import okhttp3.*;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -17,18 +15,15 @@ public class BpmnTestEngineConnector {
     private final ApplicationProperties applicationProperties;
     private final OkHttpClient client;
     private final ObjectMapper objectMapper = new ObjectMapper();
-    private final Logger logger;
-
 
     public BpmnTestEngineConnector(ApplicationProperties applicationProperties) {
         this.applicationProperties = applicationProperties;
         client = new OkHttpClient().newBuilder().build();
-        this.logger = (Logger) LoggerFactory.getLogger(BpmnTestEngineConnector.class);
     }
 
 
     public TestEngineDTO startTest(String id, TestConfigDTO testConfig) throws JsonProcessingException {
-        logger.info(objectMapper.writeValueAsString(testConfig));
+//        logger.info(objectMapper.writeValueAsString(testConfig));
 //        return null;
         MediaType mediaType = MediaType.parse("application/json");
         RequestBody body = RequestBody.create(objectMapper.writeValueAsString(testConfig), mediaType);

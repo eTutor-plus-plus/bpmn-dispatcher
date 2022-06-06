@@ -52,16 +52,10 @@ public class BpmnModulService {
     }
 
     public Analysis analyze(Submission submission, Locale locale) throws Exception {
-        // TODO fetch submission max points from DB
-
         Analysis analysis = new BpmnAnalysis();
-
         analysis.setSubmission(submission);
         // add Deploy Process
         this.deploySubmissionBpmn(submission, analysis);
-//        if (deployementResult.containsKey(false)) {
-//            // TODO create default Analysis with hint
-//        }
         // TODO stub XML validion Modul
         return analysis;
     }
@@ -69,7 +63,6 @@ public class BpmnModulService {
     public Grading grade(Analysis analysis, Submission submission) throws Exception {
         if (!(analysis instanceof BpmnAnalysis)) throw new ExerciseNotValidException("wrong Analysistyp");
         Grading grading = new DefaultGrading();
-        // TODO update to use submission.getMaxPoints
 //        grading.setMaxPoints(submission.getMaxPoints());
         if (((BpmnAnalysis) analysis).isDeploymentSuccesful()) {
             grading.setMaxPoints(1);
@@ -77,19 +70,17 @@ public class BpmnModulService {
 
             // add getTestconfig by submission exerciseid
             for (String id : ((BpmnAnalysis) analysis).getCurrentIds()) {
-                logger.info(((BpmnAnalysis) analysis).getCurrentIds().toString() + "------" + ((BpmnAnalysis) analysis).getCurrentDefinitionId().toString());
+//                logger.info(((BpmnAnalysis) analysis).getCurrentIds().toString() + "------" + ((BpmnAnalysis) analysis).getCurrentDefinitionId().toString());
                 result = this.bpmnTestEngineConnector.startTest(id, this.fetchTestConfig(submission.getExerciseId()));
             }
             // get canReachLastTask by this grade
             if (result != null) {
-                logger.info(result.toString());
+                logger.info("Result: " + result);
                 testEngineDTORepository.save(result);
-                logger.info("Engine" + result.getTestEngineRuntimeDTO().isProcessInOrder());
                 if (result.getTestEngineRuntimeDTO().isProcessInOrder()) {
                     grading.setPoints(grading.getMaxPoints());
                 }
             }
-
             // TODO optional make hints for the exercise
             // TODO optional use parallel and xor gateway control
 
@@ -104,7 +95,7 @@ public class BpmnModulService {
     }
 
     private void deploySubmissionBpmn(Submission submission, Analysis analysis) throws ExerciseNotValidException {
-        if (!(analysis instanceof BpmnAnalysis)) throw new ExerciseNotValidException("wrong Analysistyp");
+        if (!(analysis instanceof BpmnAnalysis)) throw new ExerciseNotValidException("wrong analysis typ");
         String xml = submission.getPassedAttributes().get("submission");
         String result;
         if (xml == null || xml.isBlank()) throw new ExerciseNotValidException("no Bpmn in Submission");
@@ -129,21 +120,13 @@ public class BpmnModulService {
             ((BpmnAnalysis) analysis).setDeploymentSuccesful(true);
             try {
                 JSONObject obj = new JSONObject(result);
-                String id = obj.getString("id");
-//                logger.info("ID:+++++++" + id);
-//                currentDefinitionId = obj.getJSONObject("deployedProcessDefinitions").keys().next().toString();
-//                logger.info(currentDefinitionId);
-//                logger.info("---Deployed!---");
                 JSONObject responseObject = obj.getJSONObject("deployedProcessDefinitions");
                 Iterator definitionID = obj.getJSONObject("deployedProcessDefinitions").keys();
                 while (definitionID.hasNext()) {
                     String definitionId = definitionID.next().toString();
                     ((BpmnAnalysis) analysis).getCurrentDefinitionId().add(definitionId);
-//                    logger.info(definitionID.next().toString());
                     ((BpmnAnalysis) analysis).getCurrentIds().add(responseObject.getJSONObject(definitionId).getString("key"));
-//                    logger.info(responseObject.getJSONObject(definitionId).getString("key"));
                 }
-//                logger.warn(definitionID);
                 logger.info("---Deployed!---");
             } catch (JSONException e) {
                 throw new RuntimeException(e);

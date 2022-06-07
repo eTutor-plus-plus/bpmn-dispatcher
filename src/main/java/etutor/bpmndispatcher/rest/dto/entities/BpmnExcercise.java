@@ -1,6 +1,7 @@
 package etutor.bpmndispatcher.rest.dto.entities;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import net.minidev.json.annotate.JsonIgnore;
 
 import javax.persistence.*;
 import java.util.LinkedHashSet;
@@ -12,6 +13,7 @@ public class BpmnExcercise {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)
+    @JsonIgnore
     private Integer id;
 
     @OneToMany(mappedBy = "bpmnExcercise", cascade = CascadeType.ALL, orphanRemoval = true)

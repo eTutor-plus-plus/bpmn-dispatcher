@@ -28,26 +28,41 @@ public class ETutorBpmnController {
         this.bpmnControllerExerciseService = bpmnControllerExerciseService;
     }
 
-    /**
-     * @param exerciseDTO = Testconfig
-     * @return a ResponseEntity with ID
-     */
-    @PostMapping("/exercise")
-    public ResponseEntity<Integer> createExercise(@RequestBody TestConfigDTO exerciseDTO) {
-        try {
-            int id = bpmnControllerExerciseService.createExercise(exerciseDTO);
-            return ResponseEntity.ok(id);
-        } catch (IOException e) {
-            logger.warn(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-        }
-    }
+//    /**
+//     * @param exerciseDTO = Testconfig
+//     * @return a ResponseEntity with ID
+//     */
+//    @PostMapping("/exercise")
+//    public ResponseEntity<Integer> createExercise(@RequestBody TestConfigDTO exerciseDTO) {
+//        try {
+//            int id = bpmnControllerExerciseService.createExercise(exerciseDTO);
+//            return ResponseEntity.ok(id);
+//        } catch (IOException e) {
+//            logger.warn(e.getMessage());
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+//        }
+//    }
+
+//    /**
+//     * @param exerciseDTO = Testconfig
+//     * @return a ResponseEntity with ID
+//     */
+//    @PostMapping("/bpmnExercise")
+//    public ResponseEntity<Integer> createBpmnExercise(@RequestBody List<TestConfigDTO> exerciseDTO) {
+//        try {
+//            int id = bpmnControllerExerciseService.createBpmnExercise(exerciseDTO);
+//            return ResponseEntity.ok(id);
+//        } catch (IOException e) {
+//            logger.warn(e.getMessage());
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+//        }
+//    }
 
     /**
      * @param exerciseDTO = Testconfig
      * @return a ResponseEntity with ID
      */
-    @PostMapping("/bpmnExercise")
+    @PostMapping("/exercise")
     public ResponseEntity<Integer> createBpmnExercise(@RequestBody List<TestConfigDTO> exerciseDTO) {
         try {
             int id = bpmnControllerExerciseService.createBpmnExercise(exerciseDTO);
@@ -58,21 +73,21 @@ public class ETutorBpmnController {
         }
     }
 
-    /**
-     * Returns the exercise definition for a given id
-     *
-     * @param id the id of the exercise
-     * @return an Exercise
-     */
-    @GetMapping("/exercise/solution/id/{id}")
-    public ResponseEntity<TestConfigDTO> getSolutionAndSorting(@PathVariable int id) {
-        try {
-            return ResponseEntity.ok(bpmnControllerExerciseService.read(id));
-        } catch (Exception e) {
-            logger.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
-    }
+//    /**
+//     * Returns the exercise definition for a given id
+//     *
+//     * @param id the id of the exercise
+//     * @return an Exercise
+//     */
+//    @GetMapping("/exercise/solution/id/{id}")
+//    public ResponseEntity<TestConfigDTO> getSolutionAndSorting(@PathVariable int id) {
+//        try {
+//            return ResponseEntity.ok(bpmnControllerExerciseService.read(id));
+//        } catch (Exception e) {
+//            logger.error(e.getMessage());
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+//        }
+//    }
 
     /**
      * Returns the exercise definition for a given id
@@ -80,7 +95,7 @@ public class ETutorBpmnController {
      * @param id the id of the exercise
      * @return an Exercise
      */
-    @GetMapping("/bpmnExercise/id/{id}")
+    @GetMapping("/exercise/solution/id/{id}")
     public ResponseEntity<BpmnExcercise> getExercise(@PathVariable int id) {
         try {
             return ResponseEntity.ok(bpmnControllerExerciseService.readBpmn(id));
@@ -89,25 +104,58 @@ public class ETutorBpmnController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
+//    /**
+//     * Returns the exercise definition for a given id
+//     *
+//     * @param id the id of the exercise
+//     * @return an Exercise
+//     */
+//    @GetMapping("/bpmnExercise/id/{id}")
+//    public ResponseEntity<BpmnExcercise> getExercise(@PathVariable int id) {
+//        try {
+//            return ResponseEntity.ok(bpmnControllerExerciseService.readBpmn(id));
+//        } catch (Exception e) {
+//            logger.error(e.getMessage());
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+//        }
+//    }
 
 
-    /**
-     * Updates an exercise
-     *
-     * @param testConfigDTO the TestConfig
-     * @param id            the id of the exercise
-     * @return a ResponseEntity
-     */
-    @PostMapping("exercise/id/{id}")
-    public ResponseEntity<Integer> updateExercise(@RequestBody TestConfigDTO testConfigDTO, @PathVariable int id) {
-        logger.info("Update Exercise: " + testConfigDTO);
-        try {
-            return ResponseEntity.ok(bpmnControllerExerciseService.updateExercise(testConfigDTO, id));
-        } catch (Exception e) {
-            logger.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
-    }
+//    /**
+//     * Updates an exercise
+//     *
+//     * @param testConfigDTO the TestConfig
+//     * @param id            the id of the exercise
+//     * @return a ResponseEntity
+//     */
+//    @PostMapping("exercise/id/{id}")
+//    public ResponseEntity<Integer> updateExercise(@RequestBody TestConfigDTO testConfigDTO, @PathVariable int id) {
+//        logger.info("Update Exercise: " + testConfigDTO);
+//        try {
+//            return ResponseEntity.ok(bpmnControllerExerciseService.updateExercise(testConfigDTO, id));
+//        } catch (Exception e) {
+//            logger.error(e.getMessage());
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+//        }
+//    }
+
+//    /**
+//     * Updates an exercise
+//     *
+//     * @param exerciseDTO the TestConfig
+//     * @param id          the id of the exercise
+//     * @return a ResponseEntity
+//     */
+//    @PostMapping("bpmnExercise/id/{id}")
+//    public ResponseEntity<Integer> updateBpmnExercise(@RequestBody List<TestConfigDTO> exerciseDTO, @PathVariable int id) {
+//        logger.info("Update Exercise: " + exerciseDTO.toString());
+//        try {
+//            return ResponseEntity.ok(bpmnControllerExerciseService.updateBpmnExercise(exerciseDTO, id));
+//        } catch (Exception e) {
+//            logger.error(e.getMessage());
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+//        }
+//    }
 
     /**
      * Updates an exercise
@@ -116,7 +164,7 @@ public class ETutorBpmnController {
      * @param id          the id of the exercise
      * @return a ResponseEntity
      */
-    @PostMapping("bpmnExercise/id/{id}")
+    @PostMapping("exercise/id/{id}")
     public ResponseEntity<Integer> updateBpmnExercise(@RequestBody List<TestConfigDTO> exerciseDTO, @PathVariable int id) {
         logger.info("Update Exercise: " + exerciseDTO.toString());
         try {
@@ -127,22 +175,22 @@ public class ETutorBpmnController {
         }
     }
 
-    /**
-     * Deletes an exercise
-     *
-     * @param id the id of the exercise
-     * @return a ResponseEntity
-     */
-    @DeleteMapping("exercise/id/{id}")
-    public ResponseEntity<String> deleteExercise(@PathVariable int id) {
-        try {
-            bpmnControllerExerciseService.deleteExercise(id);
-            return ResponseEntity.ok("Exercise with id " + id + " deleted");
-        } catch (Exception e) {
-            logger.error(e.getMessage());
-        }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Could not delete exercise with id " + id);
-    }
+//    /**
+//     * Deletes an exercise
+//     *
+//     * @param id the id of the exercise
+//     * @return a ResponseEntity
+//     */
+//    @DeleteMapping("exercise/id/{id}")
+//    public ResponseEntity<String> deleteExercise(@PathVariable int id) {
+//        try {
+//            bpmnControllerExerciseService.deleteExercise(id);
+//            return ResponseEntity.ok("Exercise with id " + id + " deleted");
+//        } catch (Exception e) {
+//            logger.error(e.getMessage());
+//        }
+//        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Could not delete exercise with id " + id);
+//    }
 
     /**
      * Deletes an exercise
@@ -150,7 +198,7 @@ public class ETutorBpmnController {
      * @param id the id of the exercise
      * @return a ResponseEntity
      */
-    @DeleteMapping("bpmnExercise/id/{id}")
+    @DeleteMapping("exercise/id/{id}")
     public ResponseEntity<String> deleteBpmnExercise(@PathVariable int id) {
         try {
             bpmnControllerExerciseService.deleteBpmnExercise(id);
@@ -160,5 +208,22 @@ public class ETutorBpmnController {
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Could not delete exercise with id " + id);
     }
+//
+//    /**
+//     * Deletes an exercise
+//     *
+//     * @param id the id of the exercise
+//     * @return a ResponseEntity
+//     */
+//    @DeleteMapping("bpmnExercise/id/{id}")
+//    public ResponseEntity<String> deleteBpmnExercise(@PathVariable int id) {
+//        try {
+//            bpmnControllerExerciseService.deleteBpmnExercise(id);
+//            return ResponseEntity.ok("Exercise with id " + id + " deleted");
+//        } catch (Exception e) {
+//            logger.error(e.getMessage());
+//        }
+//        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Could not delete exercise with id " + id);
+//    }
 
 }

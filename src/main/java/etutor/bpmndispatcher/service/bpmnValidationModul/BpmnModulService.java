@@ -161,7 +161,7 @@ public class BpmnModulService {
 
     private List<TestConfigDTO> fetchBpmnConfig(int exerciseId) throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:" + serverProperties.getPort() + "/bpmn/bpmnExercise/id/" + exerciseId))
+                .uri(URI.create("http://localhost:" + serverProperties.getPort() + "/bpmn/exercise/solution/id/" + exerciseId))
                 .build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         BpmnExcercise excercise = objectMapper.readValue(response.body(), BpmnExcercise.class);

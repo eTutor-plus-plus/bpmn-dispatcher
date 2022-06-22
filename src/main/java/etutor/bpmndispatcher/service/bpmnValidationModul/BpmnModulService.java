@@ -35,7 +35,8 @@ public class BpmnModulService {
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final BpmnDeploymentService bpmnDeploymentService;
     private final BpmnTestEngineConnector bpmnTestEngineConnector;
-    //    private final TestConfigDTORepository testConfigDTORepository;
+    // private final TestConfigDTORepository testConfigDTORepository;
+    private final TestEngineDTORepository testEngineDTORepository;
     private final ServerProperties serverProperties;
     private final HttpClient client = HttpClient.newHttpClient();
 
@@ -48,6 +49,7 @@ public class BpmnModulService {
         this.bpmnDeploymentService = bpmnDeploymentService;
         this.bpmnTestEngineConnector = bpmnTestEngineConnector;
 //        this.testConfigDTORepository = testConfigDTORepository;
+        this.testEngineDTORepository = testEngineDTORepository;
         this.serverProperties = serverProperties;
         this.logger = (Logger) LoggerFactory.getLogger(BpmnModulService.class);
     }
@@ -85,6 +87,7 @@ public class BpmnModulService {
                         grading.setPoints(0);
                         break;
                     }
+                    this.testEngineDTORepository.save(response);
 //                    logger.info("Result: " + result);
                 }
                 // get canReachLastTask by this grade

@@ -1,6 +1,7 @@
 package etutor.bpmndispatcher.rest.dto.entities;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import etutor.bpmndispatcher.rest.dto.interfaces.TestConfig_Interface;
 import net.minidev.json.annotate.JsonIgnore;
@@ -9,6 +10,7 @@ import javax.persistence.*;
 import javax.transaction.Transactional;
 import java.io.Serializable;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -18,6 +20,9 @@ public class TestConfigDTO implements TestConfig_Interface, Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @JsonIgnore
     private int id;
+
+    @Column(nullable = false)
+    private boolean shouldHaveCorrectOrder = false;
 
     @ElementCollection
     @CollectionTable(name = "test_configdto_tasks_in_correct_order",
@@ -32,12 +37,26 @@ public class TestConfigDTO implements TestConfig_Interface, Serializable {
     @Column(name = "labels")
     private List<String> labels = new java.util.ArrayList<>();
 
+    @ManyToOne
+    @JsonBackReference
+    private BpmnExcercise bpmnExcercise;
+
     public TestConfigDTO() {
     }
 
-    public TestConfigDTO(List<String> tasksInCorrectOrder, List<String> labels) {
+    public TestConfigDTO(boolean shouldHaveCorrectOrder, List<String> tasksInCorrectOrder, List<String> labels, BpmnExcercise bpmnExcercise) {
+        this.shouldHaveCorrectOrder = shouldHaveCorrectOrder;
         this.tasksInCorrectOrder = tasksInCorrectOrder;
         this.labels = labels;
+        this.bpmnExcercise = bpmnExcercise;
+    }
+
+    public BpmnExcercise getBpmnExcercise() {
+        return bpmnExcercise;
+    }
+
+    public void setBpmnExcercise(BpmnExcercise bpmnExcercise) {
+        this.bpmnExcercise = bpmnExcercise;
     }
 
     public int getId() {
@@ -64,10 +83,32 @@ public class TestConfigDTO implements TestConfig_Interface, Serializable {
         this.labels = labels;
     }
 
+    public boolean isShouldHaveCorrectOrder() {
+        return shouldHaveCorrectOrder;
+    }
+
+    public void setShouldHaveCorrectOrder(boolean shouldHaveCorrectOrder) {
+        this.shouldHaveCorrectOrder = shouldHaveCorrectOrder;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof TestConfigDTO)) return false;
+        TestConfigDTO that = (TestConfigDTO) o;
+        return getId() == that.getId() && isShouldHaveCorrectOrder() == that.isShouldHaveCorrectOrder() && getTasksInCorrectOrder().equals(that.getTasksInCorrectOrder()) && getLabels().equals(that.getLabels()) && getBpmnExcercise().equals(that.getBpmnExcercise());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), isShouldHaveCorrectOrder(), getTasksInCorrectOrder(), getLabels(), getBpmnExcercise());
+    }
+
     @Override
     public String toString() {
         return "TestConfigDTO{" +
                 "id=" + id +
+                ", shouldHaveCorrectOrder=" + shouldHaveCorrectOrder +
                 ", tasksInCorrectOrder=" + tasksInCorrectOrder +
                 ", labels=" + labels +
                 '}';

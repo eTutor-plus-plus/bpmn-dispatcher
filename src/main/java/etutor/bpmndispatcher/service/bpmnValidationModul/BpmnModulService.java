@@ -6,6 +6,7 @@ import etutor.bpmndispatcher.evaluation.Analysis;
 import etutor.bpmndispatcher.evaluation.BpmnAnalysis;
 import etutor.bpmndispatcher.evaluation.DefaultGrading;
 import etutor.bpmndispatcher.evaluation.Grading;
+import etutor.bpmndispatcher.rest.dto.entities.BpmnExcercise;
 import etutor.bpmndispatcher.rest.dto.entities.Submission;
 import etutor.bpmndispatcher.rest.dto.entities.TestConfigDTO;
 import etutor.bpmndispatcher.rest.dto.entities.TestEngineDTO;
@@ -23,6 +24,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -33,9 +35,10 @@ public class BpmnModulService {
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final BpmnDeploymentService bpmnDeploymentService;
     private final BpmnTestEngineConnector bpmnTestEngineConnector;
-    //    private final TestConfigDTORepository testConfigDTORepository;
+    // private final TestConfigDTORepository testConfigDTORepository;
     private final TestEngineDTORepository testEngineDTORepository;
     private final ServerProperties serverProperties;
+    private final HttpClient client = HttpClient.newHttpClient();
 
 
     private List<String> currentIds;
@@ -66,20 +69,35 @@ public class BpmnModulService {
 //        grading.setMaxPoints(submission.getMaxPoints());
         if (((BpmnAnalysis) analysis).isDeploymentSuccesful()) {
             grading.setMaxPoints(1);
-            TestEngineDTO result = null;
+            List<TestEngineDTO> result = new ArrayList<>();
+
 
             // add getTestconfig by submission exerciseid
             for (String id : ((BpmnAnalysis) analysis).getCurrentIds()) {
-//                logger.info(((BpmnAnalysis) analysis).getCurrentIds().toString() + "------" + ((BpmnAnalysis) analysis).getCurrentDefinitionId().toString());
-                result = this.bpmnTestEngineConnector.startTest(id, this.fetchTestConfig(submission.getExerciseId()));
-            }
-            // get canReachLastTask by this grade
-            if (result != null) {
-                logger.info("Result: " + result);
-                testEngineDTORepository.save(result);
-                if (result.getTestEngineRuntimeDTO().isProcessInOrder()) {
-                    grading.setPoints(grading.getMaxPoints());
+                //                logger.info(((BpmnAnalysis) analysis).getCurrentIds().toString() + "------" + ((BpmnAnalysis) analysis).getCurrentDefinitionId().toString());
+                //                TestConfigDTO configDTO = this.fetchTestConfig(submission.getExerciseId());
+                //                result = this.bpmnTestEngineConnector.startTest(id, configDTO);
+                List<TestConfigDTO> configDTO = this.fetchBpmnConfig(submission.getExerciseId());
+                for (TestConfigDTO config : configDTO) {
+//                    result.add(this.bpmnTestEngineConnector.startTest(id, config));
+                    TestEngineDTO response = this.bpmnTestEngineConnector.startTest(id, config);
+                    if (this.gradeTestEngine(response, config)) {
+                        grading.setPoints(grading.getMaxPoints());
+                    } else {
+                        grading.setPoints(0);
+                        break;
+                    }
+                    this.testEngineDTORepository.save(response);
+//                    logger.info("Result: " + result);
                 }
+                // get canReachLastTask by this grade
+//                testEngineDTORepository.saveAll(result);
+//                if (this.gradeByTestEngine(result, config)) {
+//                    grading.setPoints(grading.getMaxPoints());
+//                } else {
+//                    grading.setPoints(0);
+//                    break;
+//                }
             }
             // TODO optional make hints for the exercise
             // TODO optional use parallel and xor gateway control
@@ -136,7 +154,6 @@ public class BpmnModulService {
     }
 
     private TestConfigDTO fetchTestConfig(int exerciseId) throws IOException, InterruptedException {
-        HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create("http://localhost:" + serverProperties.getPort() + "/bpmn/exercise/solution/id/" + exerciseId))
                 .build();
@@ -145,11 +162,52 @@ public class BpmnModulService {
         throw new IOException("no config");
     }
 
+    private List<TestConfigDTO> fetchBpmnConfig(int exerciseId) throws IOException, InterruptedException {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("http://localhost:" + serverProperties.getPort() + "/bpmn/exercise/solution/id/" + exerciseId))
+                .build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        BpmnExcercise excercise = objectMapper.readValue(response.body(), BpmnExcercise.class);
+        List<TestConfigDTO> list = new ArrayList<>(excercise.getTestConfigSet());
+        if (response.statusCode() == 200) return list;
+        throw new IOException("no config");
+    }
+
     private void removeProcessInstance(String id) {
         try {
             this.bpmnDeploymentService.deleteProcess(id);
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+//    private boolean gradeByTestEngine(List<TestEngineDTO> engineDTOList, TestConfigDTO configDTO) {
+//        if (engineDTOList == null || engineDTOList.size() == 0) return false;
+//        for (TestEngineDTO e : engineDTOList) {
+//            if (!configDTO.isShouldHaveCorrectOrder() && e.getTestEngineRuntimeDTO().isProcessInOrder()) {
+//                logger.warn(configDTO.toString() + " ---- " + e);
+//                logger.warn("first false");
+//                return false;
+//            } else if (configDTO.isShouldHaveCorrectOrder() && !e.getTestEngineRuntimeDTO().isProcessInOrder()) {
+//                logger.warn(configDTO.toString() + " ---- " + e);
+//                logger.warn("second false");
+//                return false;
+//            } else {
+//                return true;
+//            }
+//        }
+//        logger.warn("3 false");
+//        return false;
+//    }
+
+    private boolean gradeTestEngine(TestEngineDTO response, TestConfigDTO config) {
+        if (response == null || config == null) return false;
+        if (!config.isShouldHaveCorrectOrder() && response.getTestEngineRuntimeDTO().isProcessInOrder()) {
+            return false;
+        } else if (config.isShouldHaveCorrectOrder() && !response.getTestEngineRuntimeDTO().isProcessInOrder()) {
+            return false;
+        } else {
+            return true;
         }
     }
 }

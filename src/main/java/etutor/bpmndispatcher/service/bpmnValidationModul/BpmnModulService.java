@@ -202,9 +202,9 @@ public class BpmnModulService {
 
     private boolean gradeTestEngine(TestEngineDTO response, TestConfigDTO config) {
         if (response == null || config == null) return false;
-        if (!config.isShouldHaveCorrectOrder() && response.getTestEngineRuntimeDTO().isProcessInOrder()) {
+        if (config.isWrongPath() && response.getTestEngineRuntimeDTO().isProcessInOrder()) {
             return false;
-        } else if (config.isShouldHaveCorrectOrder() && !response.getTestEngineRuntimeDTO().isProcessInOrder()) {
+        } else if (!config.isWrongPath() && !response.getTestEngineRuntimeDTO().isProcessInOrder()) {
             return false;
         } else {
             return true;

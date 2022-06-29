@@ -22,7 +22,7 @@ public class TestConfigDTO implements TestConfig_Interface, Serializable {
     private int id;
 
     @Column(nullable = false)
-    private boolean shouldHaveCorrectOrder = false;
+    private boolean wrongPath = false;
 
     @ElementCollection
     @CollectionTable(name = "test_configdto_tasks_in_correct_order",
@@ -44,8 +44,8 @@ public class TestConfigDTO implements TestConfig_Interface, Serializable {
     public TestConfigDTO() {
     }
 
-    public TestConfigDTO(boolean shouldHaveCorrectOrder, List<String> tasksInCorrectOrder, List<String> labels, BpmnExcercise bpmnExcercise) {
-        this.shouldHaveCorrectOrder = shouldHaveCorrectOrder;
+    public TestConfigDTO(boolean wrongPath, List<String> tasksInCorrectOrder, List<String> labels, BpmnExcercise bpmnExcercise) {
+        this.wrongPath = wrongPath;
         this.tasksInCorrectOrder = tasksInCorrectOrder;
         this.labels = labels;
         this.bpmnExcercise = bpmnExcercise;
@@ -83,12 +83,12 @@ public class TestConfigDTO implements TestConfig_Interface, Serializable {
         this.labels = labels;
     }
 
-    public boolean isShouldHaveCorrectOrder() {
-        return shouldHaveCorrectOrder;
+    public boolean isWrongPath() {
+        return wrongPath;
     }
 
-    public void setShouldHaveCorrectOrder(boolean shouldHaveCorrectOrder) {
-        this.shouldHaveCorrectOrder = shouldHaveCorrectOrder;
+    public void setWrongPath(boolean shouldHaveCorrectOrder) {
+        this.wrongPath = shouldHaveCorrectOrder;
     }
 
     @Override
@@ -96,19 +96,19 @@ public class TestConfigDTO implements TestConfig_Interface, Serializable {
         if (this == o) return true;
         if (!(o instanceof TestConfigDTO)) return false;
         TestConfigDTO that = (TestConfigDTO) o;
-        return getId() == that.getId() && isShouldHaveCorrectOrder() == that.isShouldHaveCorrectOrder() && getTasksInCorrectOrder().equals(that.getTasksInCorrectOrder()) && getLabels().equals(that.getLabels()) && getBpmnExcercise().equals(that.getBpmnExcercise());
+        return getId() == that.getId() && isWrongPath() == that.isWrongPath() && getTasksInCorrectOrder().equals(that.getTasksInCorrectOrder()) && getLabels().equals(that.getLabels()) && getBpmnExcercise().equals(that.getBpmnExcercise());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), isShouldHaveCorrectOrder(), getTasksInCorrectOrder(), getLabels(), getBpmnExcercise());
+        return Objects.hash(getId(), isWrongPath(), getTasksInCorrectOrder(), getLabels(), getBpmnExcercise());
     }
 
     @Override
     public String toString() {
         return "TestConfigDTO{" +
                 "id=" + id +
-                ", shouldHaveCorrectOrder=" + shouldHaveCorrectOrder +
+                ", shouldHaveCorrectOrder=" + wrongPath +
                 ", tasksInCorrectOrder=" + tasksInCorrectOrder +
                 ", labels=" + labels +
                 '}';

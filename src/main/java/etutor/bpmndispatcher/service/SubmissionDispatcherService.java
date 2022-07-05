@@ -8,7 +8,7 @@ import etutor.bpmndispatcher.evaluation.Grading;
 import etutor.bpmndispatcher.rest.dto.entities.GradingDTO;
 import etutor.bpmndispatcher.rest.dto.entities.ReportDTO;
 import etutor.bpmndispatcher.rest.dto.entities.Submission;
-import etutor.bpmndispatcher.service.bpmnValidationModul.BpmnModulService;
+import etutor.bpmndispatcher.service.bpmnValidationModul.BpmnModuleService;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -23,12 +23,12 @@ import java.util.Locale;
 public class SubmissionDispatcherService {
     private final Logger logger;
     private final RepositoryService repositoryService;
-    private final BpmnModulService bpmnModulService;
+    private final BpmnModuleService bpmnModuleService;
     private final ApplicationProperties applicationProperties;
     private final ReportService reportService;
 
-    public SubmissionDispatcherService(RepositoryService repositoryService, BpmnModulService bpmnModulService, ApplicationProperties applicationProperties, ReportService reportService) {
-        this.bpmnModulService = bpmnModulService;
+    public SubmissionDispatcherService(RepositoryService repositoryService, BpmnModuleService bpmnModuleService, ApplicationProperties applicationProperties, ReportService reportService) {
+        this.bpmnModuleService = bpmnModuleService;
         this.applicationProperties = applicationProperties;
         this.reportService = reportService;
         this.logger = (Logger) LoggerFactory.getLogger(SubmissionDispatcherService.class);
@@ -78,7 +78,7 @@ public class SubmissionDispatcherService {
      * @throws Exception if an error occurs
      */
     public Analysis getAnalysis(Submission submission, Locale locale) throws Exception {
-        return this.bpmnModulService.analyze(submission, locale);
+        return this.bpmnModuleService.analyze(submission, locale);
     }
 
 
@@ -91,7 +91,7 @@ public class SubmissionDispatcherService {
      * @throws Exception if an error occurs
      */
     public Grading getGrading(Analysis analysis, Submission submission) throws Exception {
-        return this.bpmnModulService.grade(analysis, submission);
+        return this.bpmnModuleService.grade(analysis, submission);
     }
 
 

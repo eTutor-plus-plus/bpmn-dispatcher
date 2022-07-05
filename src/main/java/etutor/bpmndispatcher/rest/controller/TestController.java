@@ -7,7 +7,6 @@ import etutor.bpmndispatcher.rest.dto.repositories.BpmnExcerciseRepository;
 import etutor.bpmndispatcher.rest.dto.repositories.TestConfigDTORepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -51,7 +50,7 @@ public class TestController {
         JSONObject jsonObject_failed = new JSONObject();
         try {
             jsonObject_failed.put("result", "Parse not available");
-        } catch (JSONException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
         if (bpmnXml == null || bpmnXml.isBlank()) return ResponseEntity.status(500).body(jsonObject_failed.toString());
@@ -59,7 +58,7 @@ public class TestController {
         try {
             jsonObject.put("test", "test");
             jsonObject.put("xml", bpmnXml);
-        } catch (JSONException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
         logger.info(jsonObject.toString());

@@ -12,9 +12,9 @@ import etutor.bpmndispatcher.rest.dto.entities.TestConfigDTO;
 import etutor.bpmndispatcher.rest.dto.entities.TestEngineDTO;
 import etutor.bpmndispatcher.rest.dto.repositories.TestEngineDTORepository;
 import etutor.bpmndispatcher.service.ExerciseNotValidException;
+import org.json.JSONObject;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;

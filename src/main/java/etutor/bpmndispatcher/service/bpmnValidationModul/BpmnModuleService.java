@@ -10,13 +10,11 @@ import etutor.bpmndispatcher.rest.dto.entities.BpmnExcercise;
 import etutor.bpmndispatcher.rest.dto.entities.Submission;
 import etutor.bpmndispatcher.rest.dto.entities.TestConfigDTO;
 import etutor.bpmndispatcher.rest.dto.entities.TestEngineDTO;
-import etutor.bpmndispatcher.rest.dto.repositories.TestConfigDTORepository;
 import etutor.bpmndispatcher.rest.dto.repositories.TestEngineDTORepository;
 import etutor.bpmndispatcher.service.ExerciseNotValidException;
+import org.json.JSONObject;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
-import org.springframework.boot.configurationprocessor.json.JSONException;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -30,7 +28,7 @@ import java.util.List;
 import java.util.Locale;
 
 @Service
-public class BpmnModulService {
+public class BpmnModuleService {
     private final Logger logger;
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final BpmnDeploymentService bpmnDeploymentService;
@@ -40,18 +38,12 @@ public class BpmnModulService {
     private final ServerProperties serverProperties;
     private final HttpClient client = HttpClient.newHttpClient();
 
-
-    private List<String> currentIds;
-    private List<String> currentDefinitionId;
-    private boolean deploymentSuccesfull;
-
-    public BpmnModulService(BpmnDeploymentService bpmnDeploymentService, BpmnTestEngineConnector bpmnTestEngineConnector, TestConfigDTORepository testConfigDTORepository, TestEngineDTORepository testEngineDTORepository, ServerProperties serverProperties) {
+    public BpmnModuleService(BpmnDeploymentService bpmnDeploymentService, BpmnTestEngineConnector bpmnTestEngineConnector, TestEngineDTORepository testEngineDTORepository, ServerProperties serverProperties) {
         this.bpmnDeploymentService = bpmnDeploymentService;
         this.bpmnTestEngineConnector = bpmnTestEngineConnector;
-//        this.testConfigDTORepository = testConfigDTORepository;
         this.testEngineDTORepository = testEngineDTORepository;
         this.serverProperties = serverProperties;
-        this.logger = (Logger) LoggerFactory.getLogger(BpmnModulService.class);
+        this.logger = (Logger) LoggerFactory.getLogger(BpmnModuleService.class);
     }
 
     public Analysis analyze(Submission submission, Locale locale) throws Exception {
@@ -112,7 +104,7 @@ public class BpmnModulService {
         return grading;
     }
 
-    private void deploySubmissionBpmn(Submission submission, Analysis analysis) throws ExerciseNotValidException {
+    private void deploySubmissionBpmn(Submission submission, Analysis analysis) throws Exception {
         if (!(analysis instanceof BpmnAnalysis)) throw new ExerciseNotValidException("wrong analysis typ");
         String xml = submission.getPassedAttributes().get("submission");
         String result;
@@ -131,7 +123,7 @@ public class BpmnModulService {
                 String typ = obj.getString("type");
                 ((BpmnAnalysis) analysis).setError(typ);
                 ((BpmnAnalysis) analysis).setErrorDescription(message);
-            } catch (JSONException e) {
+            } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         } else {
@@ -146,8 +138,8 @@ public class BpmnModulService {
                     ((BpmnAnalysis) analysis).getCurrentIds().add(responseObject.getJSONObject(definitionId).getString("key"));
                 }
                 logger.info("---Deployed!---");
-            } catch (JSONException e) {
-                throw new RuntimeException(e);
+            } catch (Exception e) {
+                throw new Exception("JSON Exception:" + e.toString());
             }
         }
 

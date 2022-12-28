@@ -8,8 +8,8 @@
         <version>2.6.7</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>Etutor</groupId>
-    <artifactId>BPMN-Dispatcher</artifactId>
+    <groupId>at.jku.dke.etutor</groupId>
+    <artifactId>bpmn-dispatcher</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>BPMN-Dispatcher</name>
     <description>BPMN-Dispatcher</description>

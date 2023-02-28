@@ -15,12 +15,13 @@
     <description>BPMN-Dispatcher</description>
     <properties>
         <java.version>17</java.version>
+        <objects.version>1.1</objects.version>
     </properties>
     <dependencies>
         <dependency>
             <groupId>at.jku.dke.etutor</groupId>
             <artifactId>etutor-objects</artifactId>
-            <version>1.0</version>
+            <version>${objects.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
